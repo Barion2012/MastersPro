@@ -1,0 +1,148 @@
+﻿<!DOCTYPE html>
+@{ 
+    var main = "1991436da230dd8fb3c7";
+}
+<html lang="ru-RU">
+<head>
+
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBpnZcWSyZEcu5AylT_GRCgpKqUB9fcEbs"></script>
+    <environment include="Development">
+        <title>Your Job @ViewData["Title"] - Development</title>
+    </environment>
+    <environment exclude="Development">
+        <title>Your Job @ViewData["Title"]</title>
+    </environment>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Language" content="ru">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="qLabFirst">
+    <meta name="author" content="">
+    <meta name="msapplication-tap-highlight" content="no">
+    <link rel="apple-touch-icon" sizes="180x180" href="~/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="~/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="~/favicon-16x16.png">
+    <link rel="manifest" href="~/site.webmanifest">
+
+    <environment include="Development">
+        <link href="~/main.@(main).css" rel="stylesheet" asp-append-version="true">
+        <link rel="stylesheet" href="~/css/devextreme/dx.common.css" asp-append-version="true" />
+        <link href="~/css/site.css" rel="stylesheet" asp-append-version="true">
+        <link href="~/css/ext.css" rel="stylesheet" asp-append-version="true">
+        @*     <link rel="stylesheet" href="~/css/dx.generic.agregator.css" asp-append-version="true" /> *@
+        <link rel="stylesheet" href="~/css/devextreme/dx.greenmist.css" asp-append-version="true" />
+
+
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="~/css/vendor.css" asp-append-version="true" />
+        <link href="~/site.min.css" rel="stylesheet" asp-append-version="true">
+    </environment>
+
+    <link rel="stylesheet" type="text/css" href="~/css/style.css" asp-append-version="true">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+    <script src="~/js/vendor.js" asp-append-version="true"></script>
+
+</head>
+
+<body class="dx-viewport">
+    <div class="app-container app-theme-gray body-tabs-shadow fixed-sidebar fixed-header min-vh-85">
+        <div class="app-header header-shadow">
+            <div class="app-header__logo">
+
+                <a href="/" class="logo-src"></a>
+                <div class="header__pane ml-auto">
+
+                    <div>
+                        <button type="button" class="hamburger close-sidebar-btn hamburger--elastic" data-class="closed-sidebar">
+                            <span class="hamburger-box">
+                                <span class="hamburger-inner"></span>
+                            </span>
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="app-header__mobile-menu">
+                <div>
+                    <button type="button" class="hamburger hamburger--elastic mobile-toggle-nav">
+                        <span class="hamburger-box">
+                            <span class="hamburger-inner"></span>
+                        </span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="app-header__menu">
+                <div class="logo-src" style="margin-right: 45px;"></div>
+            </div>
+
+            <div class="app-header__content">
+                <ul class="header-menu nav">
+                    @await Html.PartialAsync("_AdminMenu")
+                    @await Html.PartialAsync("_ManagerMenu")
+                </ul>
+                <div class="app-header-right">
+                    <div class="header-btn-lg pr-0">
+                        <div class="widget-content p-0">
+                            <div class="widget-content-wrapper">
+                                @await Html.PartialAsync("_LoginPartial")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="app-main">
+            <div class="app-sidebar sidebar-shadow">
+                @await Html.PartialAsync("_Sidebar")                
+            </div>
+            <div class="app-main__outer">
+                <div class="app-main__inner">
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-light text-body min-vh-15">
+        <div class="container">
+            <div class="row min-vh-15 align-items-center">
+                <div class="col-md-10 mx-auto p-3">                    
+                    <div>
+                        Использование нашего сервиса предполагает, что Вы ознакомились с <a href="/pdf/Соглашение_о_неразглашении_ПД.pdf" class="footer-link" target="_blank"> политикой конфиденциальности</a>.
+                    </div>
+
+                    <div class="mt-2">
+                        Условия <a href="/pdf/Соглашение_Пользователя.pdf" target="_blank" class="footer-link">пользовательского соглашения</a>.
+                    </div>
+
+                    <div class="mt-2">
+                        &copy;&nbsp;OOO «Кьюлаб Фёст» — Your Job. Все права защищены. 2021 г.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <environment include="Development">
+        <script src="~/assets/scripts/main.@(main).js"></script>
+        <script src="~/js/signalr.min.js"></script>
+        <script type="text/javascript" src="~/assets/scripts/app.js" asp-append-version="true"></script>
+        <script type="text/javascript" src="~/assets/scripts/ext.js" asp-append-version="true"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/js/signalr.min.js"></script>
+        <script type="text/javascript" src="~/app.min.js" asp-append-version="true"></script>
+    </environment>
+
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>
+
+@RenderSection("Templates", required: false)

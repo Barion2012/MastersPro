@@ -1,0 +1,190 @@
+﻿@{ ViewData["Title"] = "Персональная информация"; }
+@model Frecipient
+
+<div class="app-page-title">
+    <div class="page-title-wrapper">
+        <div class="page-title-heading">
+            @ViewData["Title"]
+        </div>
+    </div>
+</div>
+
+
+@using (Html.BeginForm())
+{
+
+    <div id="summary"></div>
+
+    @(Html.DevExtreme().Form<Frecipient>
+().ID("persone-info")
+.ShowValidationSummary(true)
+.FormData(Model)
+.OnFieldDataChanged("saveField")
+.ElementAttr("class", "address-form form-container")
+
+
+.LabelLocation(FormLabelLocation.Top).ColCount(3)
+
+.Items(items =>
+{
+
+    items.AddButton().ButtonOptions(b => b.UseSubmitBehavior(true).Text("Проверка").Type(ButtonType.Success)
+        .OnClick(@<text> setTimeout(()=>$('.dx-form-validation-summary').prependTo('#summary'),100) </text>)
+        ).ColSpan(3);
+
+
+    items.AddGroup().Items(groupItems =>
+    {
+        groupItems.AddSimpleFor(m => m.lastName).IsRequired(true).Label(t => t.Text("Фамилия"));
+        groupItems.AddSimpleFor(m => m.firstName).IsRequired(true).Label(t => t.Text("Имя"));
+        groupItems.AddSimpleFor(m => m.middleName).IsRequired(false).Label(t => t.Text("Отчество"));
+        groupItems.AddSimpleFor(m => m.latinLastName).IsRequired(Model?.citizenship == null || Model.citizenship != (int)Countries.RUS).Label(t => t.Text("Фамилия (латиница)"));
+        groupItems.AddSimpleFor(m => m.latinFirstName).IsRequired(Model?.citizenship == null || Model.citizenship != (int)Countries.RUS).Label(t => t.Text("Имя (латиница)"));
+        groupItems.AddSimpleFor(m => m.Email).Editor(e=>e.TextBox().Disabled(true)).IsRequired(true).Label(t => t.Text("Почта"));
+        groupItems.AddSimpleFor(m => m.PhoneNumber).Editor(e => e.TextBox().Disabled(true)).IsRequired(true).Label(t => t.Text("Телефон"));
+        groupItems.AddSimpleFor(m => m.citizenship).IsRequired(true)
+        
+        .Editor(f => f.Lookup().SearchEnabled(false)
+//        .OnValueChanged(@<text>(e)=>location.reload()</text>)
+        .DataSource(ds => ds.Mvc().Controller("AgregatorUsers").LoadAction("CountriesLookup").Key("Value"))
+        .ValueExpr("Value").DisplayExpr("Text")).Label(t => t.Text("Гражданство")
+        
+        );
+        //  groupItems.AddSimpleFor(m => m.Male).Label(t => t.Text(new JS("value===0? 'Жен':'Муж'")));
+    }).Caption("Основная информация");
+
+    items.AddGroup().Items(groupItems =>
+    {
+        groupItems.AddSimpleFor(m => m.regPostalCode).Label(t => t.Text("Почтовый индекс").Location(FormLabelLocation.Top))
+        .IsRequired(true).Editor(f => f.TextBox().Mask("000000"));
+
+        groupItems.AddSimpleFor(m => m.regCountryId).IsRequired(true)
+        .Editor(f => f.Lookup().SearchEnabled(false)
+        .DataSource(ds => ds.Mvc().Controller("AgregatorUsers").LoadAction("CountriesLookup").Key("Value"))
+        .ValueExpr("Value").DisplayExpr("Text")).Label(t => t.Text("Страна").Location(FormLabelLocation.Top));
+
+        groupItems.AddSimpleFor(m => m.regState).Label(t => t.Text("Область").Location(FormLabelLocation.Top)).IsRequired(true).ColSpan(2);
+        groupItems.AddSimpleFor(m => m.regCity).Label(t => t.Text("Город").Location(FormLabelLocation.Top)).IsRequired(false);
+        groupItems.AddSimpleFor(m => m.regDistrict).Label(t => t.Text("Район").Location(FormLabelLocation.Top)).IsRequired(false);
+        groupItems.AddSimpleFor(m => m.regSettlement).Label(t => t.Text("Населенный пункт").Location(FormLabelLocation.Top)).IsRequired(false).ColSpan(2);
+        groupItems.AddSimpleFor(m => m.regStreet).Label(t => t.Text("Улица").Location(FormLabelLocation.Top)).IsRequired(false).ColSpan(4);
+        groupItems.AddSimpleFor(m => m.regHouse).Label(t => t.Text("Дом").Location(FormLabelLocation.Top)).IsRequired(false);
+        groupItems.AddSimpleFor(m => m.regBuilding).Label(t => t.Text("Строение").Location(FormLabelLocation.Top)).IsRequired(false);
+        groupItems.AddSimpleFor(m => m.regConstruption).Label(t => t.Text("Корпус").Location(FormLabelLocation.Top)).IsRequired(false);
+        groupItems.AddSimpleFor(m => m.regApartment).Label(t => t.Text("Квартира").Location(FormLabelLocation.Top)).IsRequired(false);
+
+    }).Caption("Адрес регистрации");
+
+    items.AddGroup().Items(groupItems =>
+    {
+        groupItems.AddSimpleFor(m => m.docSerial)
+        .IsRequired(true)
+        .Label(l => l.Text("Серия").Location(FormLabelLocation.Top));
+
+        groupItems.AddSimpleFor(m => m.docNumber)
+        .IsRequired(true)
+        .Label(l => l.Text("Номер").Location(FormLabelLocation.Top));
+
+        groupItems.AddSimpleFor(m => m.docDate).Editor(f => f.DateBox().Type(DateBoxType.Date))
+        .IsRequired(true)
+        .Label(l => l.Text("Дата выдачи").Location(FormLabelLocation.Top));
+
+        groupItems.AddSimpleFor(m => m.organization)
+        .IsRequired(true)
+        .Label(l => l.Text("Кем выдан").Location(FormLabelLocation.Top));
+
+
+        groupItems.AddSimpleFor(m => m.division)
+        .IsRequired(true)
+        .Editor(f => f.TextBox().Mask("000-000"))
+        .Label(l => l.Text("Код подразделения").Location(FormLabelLocation.Top));
+
+
+        groupItems.AddSimpleFor(m => m.birthDate).IsRequired(true)
+
+        .Label(l => l.Text("Дата рождения").Location(FormLabelLocation.Top))
+        .Editor(f => f.DateBox().Type(DateBoxType.Date))
+        .HelpText("дд.мм.гггг")
+
+        .IsRequired(true);
+
+        groupItems.AddSimpleFor(m => m.birthPlace).IsRequired(true)
+        .Label(l => l.Text("Место рождения").Location(FormLabelLocation.Top));
+
+    }).Caption("Паспорт")
+    .Visible(Model?.citizenship == null || Model.citizenship == (int)Countries.RUS)
+    ;
+
+    items.AddGroup().Items(groupItems =>
+    {
+
+        groupItems.AddSimpleFor(m => m.docSerial)
+        .IsRequired(true)
+        .Label(l => l.Text("Серия").Location(FormLabelLocation.Top));
+
+        groupItems.AddSimpleFor(m => m.docNumber)
+        .IsRequired(true)
+        .Label(l => l.Text("Номер").Location(FormLabelLocation.Top));
+
+        groupItems.AddSimpleFor(m => m.docDate).Editor(f => f.DateBox().Type(DateBoxType.Date))
+        .IsRequired(true)
+        .Label(l => l.Text("Дата выдачи").Location(FormLabelLocation.Top));
+
+        groupItems.AddSimpleFor(m => m.expireDate).Editor(f => f.DateBox().Type(DateBoxType.Date))
+        .IsRequired(true)
+        .Label(l => l.Text("Дата завершения").Location(FormLabelLocation.Top));
+
+        groupItems.AddSimpleFor(m => m.division)
+        .IsRequired(true)
+        .Label(l => l.Text("Код подразделения").Location(FormLabelLocation.Top));
+
+        groupItems.AddSimpleFor(m => m.birthPlace)
+        .IsRequired(true)
+        .Label(l => l.Text("Место рождения").Location(FormLabelLocation.Top));
+
+    }).Caption("Международный паспорт")
+    .Visible(Model?.citizenship == null || Model.citizenship != (int)Countries.RUS)
+    ;
+
+
+    items.AddGroup().Items(groupItems =>
+    {
+
+        groupItems.AddSimpleFor(m => m.mgSerial)
+        .IsRequired(true)
+        .Label(l => l.Text("Серия").Location(FormLabelLocation.Top));
+
+        groupItems.AddSimpleFor(m => m.mgMumber).Editor(e => e.TextBox().Placeholder("Номер"))
+        .IsRequired(true)
+        .Label(l => l.Text("Номер"));
+
+        groupItems.AddSimpleFor(m => m.mgDate).Editor(f => f.DateBox().Type(DateBoxType.Date))
+        .IsRequired(true)
+        .Label(l => l.Text("Дата выдачи").Location(FormLabelLocation.Top));
+
+    }).Caption("Миграционная карта")
+    .Visible(Model?.citizenship == null || Model.citizenship != (int)Countries.RUS)
+    ;
+
+
+})
+
+    )}
+
+
+<script>
+ var saveField = (e) => fetch('@Url.Action("Put", "Recipients")', {
+ method: 'put'
+ , credentials: 'include'
+ , headers: {
+     'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+ }
+ , body: new URLSearchParams(
+ {
+     key: e.component.option("formData").appUserId
+     ,
+     values: '{ "' + e.dataField + '": "' + e.value + '" }'
+     })
+ })
+     .then(t => { if (e.dataField == 'citizenship') location.reload()})
+</script>

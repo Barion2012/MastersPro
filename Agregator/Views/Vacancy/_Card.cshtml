@@ -1,0 +1,112 @@
+﻿@model VacancyModel  
+
+<div class="col-md-6 col-xl-4">
+    <div class="mb-3 card border-light">
+
+        <div class="card-header">
+            <ul class="nav">
+                <li class="nav-item"><a type="button" data-toggle="tab" href="@string.Format("#tab-eg5-{0}{1}0",@Model.row,@Model.col)" class="active nav-link">Описание</a></li>
+                <li class="nav-item" uluru='{"lat": @Model.techObject.Lat.ToString().Replace(',','.') , "lng": @Model.techObject.Lng.ToString().Replace(',','.')}' map="@string.Format("m{0}{1}",@Model.row,@Model.col)"><a type="button" data-toggle="tab" href="@string.Format("#tab-eg5-{0}{1}1",@Model.row,@Model.col)" class="nav-link">Местоположение</a></li>
+            </ul>
+        </div>
+        
+        <div class="tab-content">
+
+            <div class="tab-pane active" id="@string.Format("tab-eg5-{0}{1}0",Model.row,Model.col)" role="tabpanel">
+
+                <div class="card-body"> 
+                    <h1 class="card-title">@Model.vacancy.PositionNavigation.Name</h1>
+                </div>
+       
+                <div  id="@string.Format("dp{0}{1}", Model.row, Model.col)" data-children=".item">
+                    
+                    <ul class="list-group">
+                    @for (int p = 0; p < @Model.accordPages.Count; ++p)
+                    {
+                        <a class="list-group-item list-group-item-action" aria-expanded="false" aria-controls="@string.Format("dp{0}{1}{2}", @Model.row, @Model.col, p)" data-toggle="collapse" href="@string.Format("#d{0}{1}{2}",@Model.row, @Model.col, p)" class="m-0 p-0 collapsed">
+                            <div class="text-primary">@Html.Raw(Model.accordPages[p].HtmlTitle)</div>
+                            <div data-parent="@string.Format("#dp{0}{1}", Model.row, Model.col)" id="@string.Format("d{0}{1}{2}", Model.row, Model.col, p)" class="collapse">
+                                <p class="">
+                                    @Html.Raw(@Model.accordPages[p].HtmlBody)
+                                </p>
+                            </div> 
+                        </a>
+                    }
+                    </ul>
+
+                </div>
+            
+
+                <div class="card-body">
+                    <h3>
+                        <span>@string.Format("{0:n0}", @Model.vacancy.SalaryTo).Replace(",", " ")</span>
+                        @if (@Model.vacancy.SalaryTo != null){<span>р.</span>}
+                    </h3>
+                    <p>@Model.techObject.Name</p>
+                </div> 
+
+            </div>
+            <div class="tab-pane" id="@string.Format("tab-eg5-{0}{1}1",Model.row,Model.col)" role="tabpanel">
+                
+                <div class="card-body">
+                    <div id="@string.Format("m{0}{1}",Model.row,Model.col)" style="width: 100%; height: 250px; position: relative; overflow: hidden;">
+                        <div style="height: 100%; width: 100%; position: absolute; top: 0px; left: 0px; background-color: rgb(229, 227, 223);">
+                            <div class="gm-style" style="position: absolute; z-index: 0; left: 0px; top: 0px; height: 100%; width: 100%; padding: 0px; border-width: 0px; margin: 0px;"></div>
+                        </div>
+                    </div>
+                </div>   
+
+            </div>
+
+            <div class="card-footer">
+                <div vacancy="@Model.vacancy.RowId">
+                    @if (@Model.fideBackStatus.HasValue)
+                    {
+                        switch (@Model.fideBackStatus.Value)
+                        {
+                            case 0:
+                                <button class="btn btn-danger disabled btn-lg">Отклонено</button>
+                                break;
+                            case 1:
+                                <button class="btn btn-secondary disabled btn-lg">На рассмотрении</button>
+                                break;
+                            case 2:
+                            default:
+                                <button class="btn btn-success disabled btn-lg">Одобрено</button>
+                                break;
+                        }
+                    }
+                    else if (@Model.profileReady)
+                    {
+                         @(Html.DevExtreme().Button().Text("Откликнуться").ElementAttr("class", "btn btn-primary btn-lg text-light")
+                                        .OnClick(@<text> (e)=>{
+                                     fetch('/api/onfideback',
+                {
+                    method: 'post', credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        step: "VacancyRequest"
+                        , Vacancy: @Model.vacancy.RowId //$(e.target.parentElement).attr("vacancy")
+                        //, Message: "I here"
+                    })
+                }
+            )
+                .then(r => {
+                    if (r.status===200) {
+                        e.element.text('На рассмотрении');
+                        e.element.attr('class', 'btn disabled btn-secondary');
+                        hubConnection.invoke("Notify","@Model.vacancy.RowId","Новый запрос на вакансию");
+                    }
+                })
+
+                                }</text>))
+                }
+                </div>
+            </div> 
+
+        </div>
+
+    </div>
+</div>

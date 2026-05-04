@@ -1,0 +1,82 @@
+﻿@model IList<ChatMessage>
+@{ 
+    ViewData["Title"] = "Чат с менеджером"; 
+}
+
+<div class="min-h-15">
+    <div class="app-page-title">
+        <div class="page-title-wrapper">
+            <div class="page-title-heading">
+                <div>
+                    @ViewData["Title"]
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-9">
+        <div class="p-2">
+        <div id="chatroom" class="chat-wrapper overflow-auto border p-2 d-flex flex-column" style="height:400px;">
+
+            @foreach(var msg in Model)
+            {
+                @if(msg.who.ToString() == "Me")
+                {
+                    <div class="align-self-end">
+                        <div class="chat-box-wrapper chat-box-wrapper-right">
+                            <div>
+                                <div class="chat-box">@msg.text</div>                                
+                            </div>
+                            <div>
+                                <div class="avatar-icon-wrapper">
+                                    <div class="avatar-icon avatar-icon-lg rounded">
+                                        <img src="/User/Avatar" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else if(msg.who.ToString() == "Robot")
+                {
+                    <div class="chat-box-wrappert">
+                        <div class="chat-box-wrapper chat-box-wrapper-left">
+                            <div>
+                                <div class="avatar-icon-wrapper">
+                                    <div class="avatar-icon avatar-icon-lg rounded">
+                                        <img src="/assets/images/bot-icon.png" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="chat-box chat-box-robot">@msg.text</div>          
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="chat-box-wrappert">
+                        <div class="chat-box-wrapper chat-box-wrapper-left">
+                            <div>
+                                <div class="avatar-icon-wrapper mr-2">@msg.user</div>
+                            </div>
+                            <div>
+                                <div class="chat-box">@msg.text</div>                      
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        <script>document.getElementById("chatroom").scrollTop = document.getElementById("chatroom").scrollHeight;</script>
+        </div>
+        </div>
+        <div id="inputForm" class="d-flex flex-row p-2">
+            <input placeholder="Введите сюда сообщение и нажмите кнопку &#34;Отправить&#34;" type="text" id="message" class="form-control-lg form-control" />
+            <input type="button" id="sendBtn" value="Отправить" class="btn btn-primary btn-lg ml-2" />
+        </div> 
+
+    </div>
+</div>

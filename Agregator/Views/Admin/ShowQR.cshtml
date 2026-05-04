@@ -1,0 +1,32 @@
+﻿@model EnableAuthenticatorModel
+@{ ViewData["Title"] = "Регистрация с помошью QR"; }
+
+<partial name="_StatusMessage" for="@TempData["StatusMessage"]" />
+
+<h4>@ViewData["Title"]</h4>
+<div>
+    <div id="qrCode"></div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script type="text/javascript" src="~/js/qrcode.min.js"></script>
+    <script type="text/javascript">
+        ((w) => {
+            var i = 0, e = document.getElementById("qrCode");
+
+
+            var RepaintQR = () => {
+                e.innerHTML = "";
+                new QRCode(e, {
+                    text: "Helo from QLabFirst Site :)" + (i++).toString(),
+                    width: 300, height: 300
+                });
+//                setTimeout(RepaintQR, 2000)
+            };
+
+            setInterval(RepaintQR, 1500);
+            RepaintQR();
+        })(window)
+    </script>
+}

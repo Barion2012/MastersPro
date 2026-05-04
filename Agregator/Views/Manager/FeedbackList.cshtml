@@ -1,0 +1,470 @@
+﻿@{ ViewData["Title"] = "Реестр откликов"; }
+
+<h2>@ViewData["Title"]</h2>
+
+<div>
+@(Html.DevExtreme().DataGrid<Feedback>().ID("feedback-dataGrid")
+                                        .DataSource(ds => ds.Mvc()
+                                            .Controller("Feedbacks")
+                                            .LoadAction("Get")
+                                            .UpdateAction("Put")
+
+
+                                            .Key("RowId")
+                                        //            .OnLoaded(@<text >(d)=>{ $("#feedback-dataGrid").dxDataGrid("instance").option("data",d) } </text>)
+                                        )
+                                        .RemoteOperations(true)
+                                        //          .OnSaving(@<text>(c)=>{console.log($("#devextreme0").dxDataGrid("instance").option("data")); console.log(c.changes[0])}</text>)
+                                        .Columns(columns =>
+                                        {
+
+                                            columns.AddFor(m => m.RowId).Visible(false);
+                                            columns.AddFor(m => m.Status).Caption("Статус")
+                                                .Width(200)
+                                                .Lookup(lookup => lookup
+
+                                                    .DataSource(ds => ds.Mvc().Controller("Feedbacks").LoadAction("FeedBackStatusLookup").Key("Value"))
+                                                 .ValueExpr("Value")
+                                                 .DisplayExpr("Text")
+                                                );
+
+                                            //.Buttons();
+
+                                            columns.AddFor(m => m.User.Email).Caption("Пользователь").AllowEditing(false);
+
+                                            columns.AddFor(m => m.VacancyNavigation.PositionNavigation.Name).Caption("Вакансия").AllowEditing(false);
+                                            columns.AddFor(m => m.Created).Caption("Запрос").AllowEditing(false);
+                                            columns.AddFor(m => m.Updated).Caption("Ответ").AllowEditing(false);
+                                            columns.Add().Caption("ДатаДоговора").AllowEditing(false);
+
+                                        })
+                                        .Editing(e => e
+                                            .AllowUpdating(true)
+                                            .Mode(GridEditMode.Cell)
+
+                                        ).MasterDetail(m => m
+                                            .Enabled(true)
+                                            .Template(new TemplateName("feedback-detals"))
+
+                                            ).OnRowExpanding("expandRow")
+)
+
+@using (Html.DevExtreme().NamedTemplate("feedback-detals"))
+{
+    /*
+    var formItemTemplate = "<%- editorOptions.value %>";
+
+
+    @(Html.DevExtreme().Gallery()
+                                 .ID(new JS("'feedback-user-galery-'+data.UserId"))
+                                 .DataSource(ds => ds.Mvc().Controller("BlobStorages").LoadAction("Images").LoadParams(new { user_id = new JS("data.UserId") }))
+                                 //.DataSourceOptions(conf=>conf.)
+
+                                 .Loop(false)
+                                 .Height(240).Width(240)
+
+     );
+    */
+
+    //  @using (Html.BeginForm())
+    //  {
+
+    //        @using (Html.DevExtreme().ValidationGroup())
+    //       {
+
+    @Html.AntiForgeryToken() 
+    @(Html.DevExtreme().Form<Frecipient>().ID(new JS("'feedback-detal-'+data.UserId"))
+        .ShowValidationSummary(true)
+            //    .Option("edition.data",new JS("data.User"))
+            //    .Option("edition.changes", new JS("{}"))
+            //  .FormData(new JS("data.User"))
+            .ElementAttr("class", "address-form form-container")
+            .ColCount(6)
+            .LabelLocation(FormLabelLocation.Left)
+            ///  .OnFieldDataChanged(@<text>(e)=>console.log(e)</text>)
+            //  .OnInitialized(@<text>(e)=>form=e.component</text>)
+
+            .Items(items =>
+            {
+            items.AddGroup().Items(groupItems =>
+            {
+
+                groupItems.AddSimple().Template(new TemplateName("feedback-detal-gallery"));
+
+                //     groupItems.AddSimpleFor(m => m.Photo).Template(@<text><img width="240" height="240" src="data:image/jpeg;base64,<%- editorOptions.value %>"></text>).Label(t => t.Visible(false));
+                //  groupItems.AddSimpleFor(m => m.Photo).Editor(e => e.Slider().ElementAttr("width='240' height='240'"));
+                groupItems.AddSimpleFor(m => m.lastName).IsRequired(true).Label(t => t.Text("Фамилия"));
+                groupItems.AddSimpleFor(m => m.firstName).IsRequired(true).Label(t => t.Text("Имя"));
+                groupItems.AddSimpleFor(m => m.middleName).IsRequired(true).Label(t => t.Text("Отчество"));
+                groupItems.AddSimpleFor(m => m.latinLastName).IsRequired(false).Label(t => t.Text("Фамилия (латиница)"));
+                groupItems.AddSimpleFor(m => m.latinFirstName).IsRequired(false).Label(t => t.Text("Имя (латиница)"));
+                groupItems.AddSimpleFor(m => m.Email).Editor(e => e.TextBox().Buttons(b => b.Add().Name("x")).Disabled(true)).IsRequired(true).Label(t => t.Text("Почта"));
+                groupItems.AddSimpleFor(m => m.PhoneNumber).IsRequired(true).Label(t => t.Text("Телефон"));
+                groupItems.AddSimpleFor(m => m.citizenship).IsRequired(true)
+                                                                .Editor(f=>f.Lookup().SearchEnabled(false)
+                                                                    .DataSource(ds=>ds.Mvc().Controller("AgregatorUsers").LoadAction("CountriesLookup").Key("Value"))
+                                                            .ValueExpr("Value").DisplayExpr("Text")).Label(t => t.Text("Гражданство"));
+                groupItems.AddSimpleFor(m => m.Male).Label(t => t.Text(new JS("value===0? 'Жен':'Муж'")));
+
+            }).Caption("Профиль").ColSpan(2);
+
+            items.AddTabbed().TabPanelOptions(e=>e.DeferRendering(false)).ColSpan(4).Tabs(tab =>
+            {
+
+                tab.Add().Title("Адрес").Items(items =>
+                {
+
+                    items.AddGroup().ColCount(4).Items(groupItems =>
+                    {
+                        groupItems.AddSimpleFor(m => m.regPostalCode).Label(t => t.Text("Почтовый индекс").Location(FormLabelLocation.Top))
+                                .IsRequired(true).Editor(f => f.TextBox().Mask("000000"));
+
+                        groupItems.AddSimpleFor(m => m.regCountryId).IsRequired(true)
+        .Editor(f => f.Lookup().SearchEnabled(false)
+        .DataSource(ds => ds.Mvc().Controller("AgregatorUsers").LoadAction("CountriesLookup").Key("Value"))
+        .ValueExpr("Value").DisplayExpr("Text")).Label(t => t.Text("Страна").Location(FormLabelLocation.Top));
+
+                        groupItems.AddSimpleFor(m => m.regState).Label(t => t.Text("Область").Location(FormLabelLocation.Top)).IsRequired(false).ColSpan(2);
+                        groupItems.AddSimpleFor(m => m.regCity).Label(t => t.Text("Город").Location(FormLabelLocation.Top)).IsRequired(false);
+                        groupItems.AddSimpleFor(m => m.regDistrict).Label(t => t.Text("Район").Location(FormLabelLocation.Top)).IsRequired(false);
+                        groupItems.AddSimpleFor(m => m.regSettlement).Label(t => t.Text("Населенный пункт").Location(FormLabelLocation.Top)).IsRequired(false).ColSpan(2);
+                        groupItems.AddSimpleFor(m => m.regStreet).Label(t => t.Text("Улица").Location(FormLabelLocation.Top)).IsRequired(false).ColSpan(4);
+                        groupItems.AddSimpleFor(m => m.regHouse).Label(t => t.Text("Дом").Location(FormLabelLocation.Top)).IsRequired(false);
+                        groupItems.AddSimpleFor(m => m.regBuilding).Label(t => t.Text("Строение").Location(FormLabelLocation.Top)).IsRequired(false);
+                        groupItems.AddSimpleFor(m => m.regConstruption).Label(t => t.Text("Корпус").Location(FormLabelLocation.Top)).IsRequired(false);
+                        groupItems.AddSimpleFor(m => m.regApartment).Label(t => t.Text("Квартира").Location(FormLabelLocation.Top)).IsRequired(false);
+
+                    }).Caption( "Адрес");
+
+                });
+
+
+
+                tab.Add().Title("Паспорт").Items(items =>
+                {
+                    //   Console.WriteLine(new JS("data.UserId"));
+
+
+
+                    //                    if ((int)Countries.RUS == 643)
+                    //                    {
+                    items.AddGroup().Items(groupItems =>
+                    {
+
+                        groupItems.AddSimpleFor(m => m.docSerial)
+                  .IsRequired(true)
+                  .Label(l => l.Text("Серия").Location(FormLabelLocation.Top));
+
+                        groupItems.AddSimpleFor(m => m.docNumber)
+                  .IsRequired(true)
+                  .Label(l => l.Text("Номер").Location(FormLabelLocation.Top));
+
+                        groupItems.AddSimpleFor(m => m.docDate).Editor(f => f.DateBox().Type(DateBoxType.Date))
+                  .IsRequired(true)
+                  .Label(l => l.Text("Дата выдачи").Location(FormLabelLocation.Top));
+
+                        groupItems.AddSimpleFor(m => m.organization)
+                  .IsRequired(true)
+                  .Label(l => l.Text("Кем выдан").Location(FormLabelLocation.Top));
+
+
+                        groupItems.AddSimpleFor(m => m.division)
+                  .IsRequired(true)
+                  .Editor(f => f.TextBox().Mask("000-000"))
+                  .Label(l => l.Text("Код подразделения").Location(FormLabelLocation.Top));
+
+
+                        groupItems.AddSimpleFor(m => m.birthDate).IsRequired(true)
+
+                    .Label(l => l.Text("Дата рождения").Location(FormLabelLocation.Top))
+                        .Editor(f => f.DateBox().Type(DateBoxType.Date))
+                        .HelpText("дд.мм.гггг")
+
+                        .IsRequired(true);
+
+                        groupItems.AddSimpleFor(m => m.birthPlace).IsRequired(true)
+                    .Label(l => l.Text("Место рождения").Location(FormLabelLocation.Top));
+
+                    }).Caption("Паспорт")
+            .Option("visible", new JS($"data.Recipient.citizenship==={(int)Countries.RUS}"));
+
+                    //                    }
+                    //                    else
+                    //                    {
+
+
+                    items.AddGroup().Items(groupItems =>
+                    {
+
+                        groupItems.AddSimpleFor(m => m.docSerial)
+          .IsRequired(true)
+          .Label(l => l.Text("Серия").Location(FormLabelLocation.Top));
+
+                        groupItems.AddSimpleFor(m => m.docNumber)
+          .IsRequired(true)
+          .Label(l => l.Text("Номер").Location(FormLabelLocation.Top));
+
+                        groupItems.AddSimpleFor(m => m.docDate).Editor(f => f.DateBox().Type(DateBoxType.Date))
+          .IsRequired(true)
+          .Label(l => l.Text("Дата выдачи").Location(FormLabelLocation.Top));
+
+                        groupItems.AddSimpleFor(m => m.expireDate).Editor(f => f.DateBox().Type(DateBoxType.Date))
+          .IsRequired(true)
+          .Label(l => l.Text("Дата завершения").Location(FormLabelLocation.Top));
+
+                        groupItems.AddSimpleFor(m => m.mgDivision)
+          .IsRequired(true)
+          .Label(l => l.Text("Код подразделения").Location(FormLabelLocation.Top));
+
+                        groupItems.AddSimpleFor(m => m.birthPlace)
+            .IsRequired(true)
+            .Label(l => l.Text("Место рождения").Location(FormLabelLocation.Top));
+
+
+                    }).Caption("Международный паспорт")
+                    .Option("visible",new JS($"data.Recipient.citizenship!=={(int)Countries.RUS}"))
+                    ;
+
+
+                    items.AddGroup().Items(groupItems =>
+                    {
+
+                        groupItems.AddSimpleFor(m => m.docSerial)
+                                                      .IsRequired(true)
+                                                      .Label(l => l.Text("Серия").Location(FormLabelLocation.Top));
+
+                        groupItems.AddSimpleFor(m => m.docNumber)
+                                                      .IsRequired(true)
+                                                      .Label(l => l.Text("Номер").Location(FormLabelLocation.Top));
+
+                        groupItems.AddSimpleFor(m => m.docDate).Editor(f => f.DateBox().Type(DateBoxType.Date))
+                                                      .IsRequired(true)
+                                                      .Label(l => l.Text("Дата выдачи").Location(FormLabelLocation.Top));
+
+                    }).Caption("Миграционная карта")
+                                            .Option("visible", new JS($"data.Recipient.citizenship!=={(int)Countries.RUS}"))
+;
+
+                    //                    }
+                });
+
+
+                tab.Add().Title("Реквизиы").Items(items =>
+                {
+                    items.AddGroup().Items(groupItems =>
+                    {
+                        groupItems.AddSimpleFor(m => m.BankId)
+                                .IsRequired(true)
+                                .Label(l => l.Text("Банк").Location(FormLabelLocation.Top))
+                                .Editor(f => f.DropDownBox()
+                                    .DataSource(d => d.Mvc().Controller("Documents").LoadAction("GetBanks").Key("Id"))
+                                    .OnValueChanged("gridBox_valueChanged")
+                                    .ContentTemplate(new TemplateName("BanksView"))
+                                    .ValueExpr("Id")
+                                    .DisplayExpr(new JS("gridBox_displayExpr"))
+                                    .Width(600)
+                                    );
+
+                        groupItems.AddSimpleFor(m => m.Account)
+        .IsRequired(true).Editor(e => e.TextBox().Mask("000 00 000 0 0000 0000000").Disabled(true))
+        .Label(l => l.Text("Расчетный счет").Location(FormLabelLocation.Top));
+
+                        groupItems.AddButton().ButtonOptions(b => b.UseSubmitBehavior(false).Text("Открыть карточный счет")
+                                .OnClick(@<text>(e)=>{
+ fetch('/contract/sendprofile/'+e.validationGroup.group.option("formData").appUserId)
+//.then(r=>r.text()).then(r=>console.log(r)) 
+.then(r=>r.json())
+.then(r=> {if (!r.Error)
+DevExpress.ui.notify({
+            message: "Анкета самозанятого отправлена в банк",
+            position: {
+                my: "center top",
+                at: "center top"
+            }
+        }, "success", 1000)
+else
+DevExpress.ui.notify({
+            message: ""+r.Error,
+            position: {
+                my: "center top",
+                at: "center top"
+            }
+        }, "error", 1000)
+
+}//fi
+)}              </text>)
+                        ).ColSpan(1);
+
+                        groupItems.AddSimpleFor(m => m.INN)
+                  .IsRequired(true)
+                  .Label(l => l.Text("ИНН").Location(FormLabelLocation.Top));
+                    }).Caption("Реквизиты");
+                });
+
+                tab.Add().Title("Загрузки").Items(items =>
+                {
+                    items.AddGroup().Items(groupItems =>
+                    {
+
+
+                    }).Caption("Загрузки");
+                });
+
+            });
+
+
+            items.AddGroup().Caption("Формирование договора").ColSpan(6).Items(groupItems =>
+            {
+                //groupItems.
+
+
+                groupItems.AddSimple().ColSpan(4).Editor(e => e.TextArea().Name(new JS("'dog-' + data.UserId")).Height(80)).Label(l => l.Location(FormLabelLocation.Top).Text("Задание")).IsRequired(true);
+
+                groupItems.AddButton().ButtonOptions(b => b.UseSubmitBehavior(true).Text("Новый договор")
+                    .OnClick("newContract")
+
+                                                );
+                                                });
+                                                })
+
+           )
+}
+
+@using (Html.DevExtreme().NamedTemplate("feedback-detal-gallery"))
+{@(Html.DevExtreme().Gallery()
+                                 .ID(new JS("'feedback-user-galery-'+component.option('formData').appUserId"))
+                                 .DataSource(ds => ds.Mvc().Controller("BlobStorages").LoadAction("Images").LoadParams(new { user_id = new JS("component.option('formData').Id") }))
+                                 //.DataSourceOptions(conf=>conf.)
+                                // .OnContentReady(@<text>(e)=>console.log(component)</text>)
+                                 .Loop(false)
+                                 .Height(240).Width(240)
+
+     )}
+
+@using (Html.DevExtreme().NamedTemplate("BanksView"))
+{@(Html.DevExtreme().DataGrid()
+        .ID("BanksViewID")
+        .DataSource(new JS(@"component.getDataSource()"))
+        .Columns(columns => {
+            columns.Add().DataField("Id").Visible(false);
+            columns.Add().DataField("Name").Caption("Банк");
+            columns.Add().DataField("City").Caption("");
+            columns.Add().DataField("BIK").Caption("БИК");
+            columns.Add().DataField("CorAccount").Caption("Корсчет");
+        })
+        .HoverStateEnabled(true)
+        .Paging(p => p.PageSize(10))
+        .FilterRow(f => f.Visible(true))
+        .Scrolling(s => s.Mode(GridScrollingMode.Infinite))
+        .Height(250)
+        .Selection(s => s.Mode(SelectionMode.Single))
+        .SelectedRowKeys(new JS(@"[component.option(""value"")]"))
+        .OnSelectionChanged(@<text>
+            function(selectedItems) {
+                var keys = selectedItems.selectedRowKeys;
+                component.option("value", keys);
+            }
+        </text>)
+    )}
+
+</div>
+<script>
+
+  //  var form;
+
+
+    function gridBox_valueChanged(e) {
+         var $dataGrid = $("#BanksViewID");
+
+        if ($dataGrid.length) {
+            var dataGrid = $dataGrid.dxDataGrid("instance");
+            dataGrid.selectRows(e.value, false);
+        }
+    }
+    function gridBox_displayExpr(item) {
+        return item.Name+' в г. '+item.City;
+    }
+    function saveField(e)
+    {
+        $.ajax({
+            url: '@Url.Action("Put", "Recipients")'
+            , type: "PUT"
+            , data: {
+                key: e.component.option("formData").appUserId,
+                values: '{"'+e.dataField+'":"'+ e.value+'"}'
+            }
+            , success: (res) => console.log("res=>"+res)
+            , error: (err) => console.log("err=> '" + e.value+"'")
+        })
+    }
+
+    function expandRow(e)
+    {
+        var row = null;
+        var ds = e.component.getDataSource().items();
+        for (var x in ds) {
+            var xe = ds[x];
+            if (xe.RowId == e.key) {
+                row = xe;
+                break;
+            }
+        }
+
+        $.ajax({
+
+            url: '@Url.Action("GetRecipient", "Recipients")'
+            , type: "GET"
+            , data: {
+                user_id: row.UserId,
+            }
+            , success: (res) => {
+                var form = $('#feedback-detal-' + res.appUserId).dxForm('instance');
+
+                form.option('formData', row.Recipient = res);
+                form.option("onFieldDataChanged", saveField);
+
+              //  form.itemOption("INTPASS", "visible", false);
+                //   form.refrash();
+             //   console.log(form.items[1]);
+            }
+            , error: (err) => console.log("err=>"+err)
+        })
+    }
+
+    function newContract(e) {
+        //console.log(e.validationGroup.group.option("formData").Id+";"+$('textarea')[1].value)
+        $.ajax({
+            url: '@Url.Action("Post", "Documents")'
+            , type: "POST"
+            , data: JSON.stringify(
+                {
+                    Id: e.validationGroup.group.option("formData").appUserId,
+                    Text: $('textarea[name="dog-' + e.validationGroup.group.option("formData").appUserId + '"]').val()
+                })
+            , success: (res) => DevExpress.ui.notify({
+                message: "Сформирован новый договор № " + res.number,
+                position: {
+                    my: "center top",
+                    at: "center top"
+                }
+            }, "success", 3000)
+
+            , error: (err) => {
+                console.log(err); DevExpress.ui.notify({
+                    message: "Договор не сформирован:" + err.responseJSON.Errors[0].ErrorMessage,
+                    position: {
+                        my: "center top",
+                        at: "center top"
+                    }
+                }, "error", 5000)
+            }
+        })
+    }
+</script>
+
+
+
+
+
+
+

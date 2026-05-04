@@ -1,0 +1,37 @@
+{
+  "name": "nuxt-app",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@pinia/nuxt": "^0.11.0",
+    "@vuepic/vue-datepicker": "^11.0.2",
+    "@vueup/vue-quill": "^1.2.0",
+    "chart.js": "^4.4.9",
+    "click-outside-vue3": "^4.0.1",
+    "laravel-echo": "^2.0.2",
+    "maska": "^3.1.1",
+    "nuxt": "^3.15.2",
+    "nuxt-auth-sanctum": "^0.6.6",
+    "pinia": "^3.0.2",
+    "pusher-js": "^8.4.0",
+    "quill": "^2.0.3",
+    "vue": "^3.5.13",
+    "vue-chartjs": "^5.3.2",
+    "vue-final-modal": "^4.5.5",
+    "vue-router": "^4.4.5",
+    "vue-yandex-maps": "^2.2.4",
+    "vue3-toastify": "^0.2.8"
+  },
+  "devDependencies": {
+    "@vue/language-plugin-pug": "^2.2.0",
+    "pug": "^3.0.3",
+    "sass-embedded": "^1.83.4"
+  }
+}

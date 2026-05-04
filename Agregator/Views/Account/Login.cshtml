@@ -1,0 +1,84 @@
+﻿@model MainLoginModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Авторизация";
+}
+
+<h6 class="text-center mt-4">Войдите на сайт, чтобы просмотреть вакансии.</h6>
+
+<div id="login">
+    <div class="mt-3">
+        <ul class="nav nav-tabs">
+            <li class="nav-item"><a data-toggle="tab" href="#tab-login-form" class="nav-link active">Войти</a></li>
+            <li class="nav-item"><a data-toggle="tab" href="#tab-register-form" class="nav-link">Зарегистрироваться</a></li>
+            <li class="nav-item"><a data-toggle="tab" href="#tab-loginphone-form" class="nav-link">Войти по номеру телефона</a></li>
+        </ul>
+    </div>
+    <div class="card-body">
+        <div class="tab-content">
+
+            <div class="tab-pane active" id="tab-login-form" role="tabpanel">
+                @await Html.PartialAsync("LoginPartial", Model)
+            </div>
+
+            <div class="tab-pane" id="tab-register-form" role="tabpanel">
+                @await Html.PartialAsync("RegisterPartial", Model)
+            </div>
+
+            <div class="tab-pane" id="tab-loginphone-form" role="tabpanel">
+                @await Html.PartialAsync("LoginPhonePartial")
+            </div>
+        </div>
+
+        <div class="mt-4 text-center">
+            <h6 id="link1"> Войти с помощью*</h6>
+            @(Html.DevExtreme().Popover()
+            .Target("#link1")
+            .ShowEvent("mouseenter")
+            .HideEvent("mouseleave")
+            .Position(DevExtreme.AspNet.Mvc.Position.Top)
+            .Width(300)
+            .ContentTemplate(@<text>
+            * Рекомендуем использовать для регистрации внешние сервисы. Это упростит авторизацию в дальнейшем.
+            Использование внешнего сервиса подразумевает, что у Вас уже имеется соответствующая учетная запись и ваша учетная запись в Your Job будет привязана к ней.
+            При этом никакая информация из Вашего личного профиля в Your Job не будет доступна внешнему сервису.
+            </text>)
+        )
+        </div>
+        @if (Model?.ExternalLogins?.Count != 0)
+        {
+            @using (@Html.BeginForm("ExternalLogin", "Account", new { ReturnUrl = Model.ReturnUrl }, FormMethod.Post, true, new { id = "external-login-form", @class = "form" }))
+            {
+                <input type="hidden" asp-for="ProviderName" />
+
+                <div class="form__social">
+                    @foreach (var provider in Model.ExternalLogins)
+                    {
+
+                        var iconName = @provider.DisplayName.ToLower();
+                        if (iconName == "mailru") iconName = "fas fa-at";
+                        else
+                        {
+                            if (iconName == "vkontakte") iconName = "vk";
+                            else if (iconName == "facebook") iconName = "facebook-f";
+
+                            iconName = String.Concat("fab fa-", iconName);
+                        }
+                        <a href="javascript:void(0);" class="submit_external"  title="Авторизация с помощью учетной записи @provider.DisplayName"><i value="@provider.Name" class="@iconName"></i></a>
+                    }
+                </div>
+
+                <div class="dx-field">
+                    <div class="dx-field-value">
+                    @(Html.DevExtreme().CheckBox().Name("RememberMe").ID("form__checkbox")
+                        .Value(true)
+                        .Width(250)
+                        .Text("оставаться в системе")
+                        .OnValueChanged(@<Text>(e) => $("input[name='RememberMe']").val(e.value) </text>)
+                    )
+                    </div>
+                </div>
+                }
+        }
+        </div>
+</div>

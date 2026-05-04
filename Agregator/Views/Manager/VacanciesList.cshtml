@@ -1,0 +1,333 @@
+﻿@{
+    ViewData["Title"] = "Реестр вакансий";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div>
+    @(Html.DevExtreme().DataGrid<Vacancy>().ID("gridContainer")
+                .DataSource(ds => ds.Mvc().Controller("Vacancies")
+                .LoadAction("Get")
+                .InsertAction("Post")
+                .UpdateAction("Put")
+                .DeleteAction("Delete")
+                .Key("RowId")
+                )
+                .RemoteOperations(true)
+
+                .Columns(columns =>
+                {
+                columns.AddFor(m => m.RowId).AllowEditing(false).Visible(false);
+                columns.AddFor(m => m.TypeIdView).HeaderCellTemplate(@<text><b>Статус</b></text>);
+                    columns.AddFor(m => m.Position).Caption("Позиция")
+                    .Lookup(lookup => lookup.DataSource(ds => ds.Mvc().Controller("Vacancies").LoadAction("PositionsLookup").Key("Value"))
+                    .ValueExpr("Value")
+                    .DisplayExpr("Text")
+                    );
+                    columns.AddFor(m => m.BillingTypeIdValue).Visible(false);
+                    columns.AddFor(m => m.BillingTypeIdView).Visible(false);
+                    columns.AddFor(m => m.AreaIdValue).Visible(false);
+                    columns.AddFor(m => m.AreaIdView).Visible(false);
+                    columns.AddFor(m => m.Code).Caption("Код").Visible(false); ;
+              //      columns.AddFor(m => m.Name).Caption("Наименование").Visible(false); ;
+                    columns.AddFor(m => m.DescriptionTab1).Visible(false);
+                    columns.AddFor(m => m.DescriptionTab2).Visible(false);
+                    columns.AddFor(m => m.DescriptionTab3).Visible(false);
+                    columns.AddFor(m => m.SalaryCurrencyValue).Visible(false);
+                    columns.AddFor(m => m.SpecializationsIdValue).Caption("Специализация").Visible(false);
+                    columns.AddFor(m => m.SalaryFrom).Caption("От").Width(80);
+                    columns.AddFor(m => m.SalaryTo).Caption("До").Width(80);
+                    columns.AddFor(m => m.SalaryCurrencyView).Caption("Валюта").Width(50);
+                    columns.AddFor(m => m.SpecializationsIdView).Visible(false);
+                    columns.AddFor(m => m.TypeIdValue).Visible(false);
+                    columns.AddFor(m => m.KeySkillsNameValue).Visible(false);
+                    columns.AddFor(m => m.KeySkillsNameView).Visible(false);
+                    columns.AddFor(m => m.AddressShowMetroOnly).Visible(false);
+                    columns.AddFor(m => m.objects).Visible(false)
+                                        .Lookup(lookup => lookup.DataSource(ds => ds.Mvc().Controller("Vacancies").LoadAction("GetObjects").Key("Value"))
+                    .ValueExpr("Value")
+                    .DisplayExpr("Text")
+                    )
+                                        .CellTemplate(new JS("cellTemplate"))
+                                        .CalculateFilterExpression(@<text>
+                function(filterValue, selectedFilterOperation, target) {
+                    if(target === "search" && typeof(filterValue) === "string") {
+                        return [this.dataField, "contains", filterValue]
+                    }
+                    return function(data) {
+                        return (data.AssignedEmployee || []).indexOf(filterValue) !== -1
+                    }
+                }</text>)
+                    .EditCellTemplate(new TemplateName("TagBoxTemplate"));
+                    columns.Add()
+                    .Type(GridCommandColumnType.Buttons)
+                    .Width(110).Caption("#")
+                    .Buttons(b => {
+                        b.Add().Name(GridColumnButtonName.Edit);
+                        b.Add().Name(GridColumnButtonName.Delete);
+
+                        b.Add()
+                    .Hint("Сделать копию")
+                    .Icon("copy")
+                    .OnClick("cloneRow");
+                    });
+
+
+                })
+                .Editing(e => e.AllowAdding(true)
+                .AllowUpdating(true)
+                .Mode(GridEditMode.Form)
+                .AllowDeleting(true)
+                .UseIcons(true)
+
+                .Form(f => f.ColCount(3).Items(items =>
+                {
+                    items.AddSimpleFor(m => m.TypeIdView).Editor(e => e.TextBox().Disabled(true));
+                    items.AddSimpleFor(m => m.Position).ColSpan(2);
+                    //    .Editor(f => f.DropDownBox()
+                    //    .DataSource( new JS(@"$('#gridContainer').dxDataGrid(""instance"").getDataSource()"))
+                    //    );
+
+                    /*
+                    //                .DataSource(d => d.Mvc().Controller("Documents").LoadAction("GetBanks").Key("Id"))
+                    .OnValueChanged("gridBox_valueChanged")
+                    .ContentTemplate(new TemplateName("BanksView"))
+                    .ValueExpr("Id")
+                    .DisplayExpr(new JS("gridBox_displayExpr"))
+                    .Width(600)
+                    );
+                    */
+                    items.AddTabbed().ColSpan(3).Tabs(tabs =>
+                    {
+                        tabs.Add().Title("Обязанности").Items(item => item.AddSimpleFor(m => m.DescriptionTab1).Editor(e => e.TextArea().InputAttr("style", "white-space: pre;overflow-wrap: normal;overflow-x: auto").AutoResizeEnabled(true)).Label(l => l.Visible(false)));
+                        tabs.Add().Title("Требования").Items(item => item.AddSimpleFor(m => m.DescriptionTab2).Editor(e => e.TextArea().InputAttr("style", "white-space: pre;overflow-wrap: normal;overflow-x: auto").AutoResizeEnabled(true)).Label(l => l.Visible(false)));
+                        tabs.Add().Title("Условия").Items(item => item.AddSimpleFor(m => m.DescriptionTab3).Editor(e => e.TextArea().InputAttr("style", "white-space: pre;overflow-wrap: normal;overflow-x: auto").AutoResizeEnabled(true)).Label(l => l.Visible(false)));
+                    });
+                    items.AddSimpleFor(m => m.SalaryFrom);
+                    items.AddSimpleFor(m => m.SalaryTo);
+                    items.AddSimpleFor(m => m.SalaryCurrencyView).Editor(e => e.TextBox().Disabled(true));
+                    items.AddSimpleFor(m => m.objects)
+                    //.ItemTemplate(@<text> data.RowId </text>)
+                    //.DataSource(ds => ds.Mvc().Controller("Vacancies").LoadAction("GetObjects").Key(new[] { "vacancy", "object" })
+                    //.ValueExpr("vacancy").DisplayExpr("object"))
+
+                    .ColSpan(3);
+                    //      .LoadParams(new { vacancy = new JS(@"console.log($('#gridContainer').dxDataGrid(""instance""))")  } )
+                    //    .DataSource( new JS(@"$('#gridContainer').dxDataGrid(""instance"").getDataSource()"))
+
+
+
+
+                }))
+    )
+    //.OnToolbarPreparing("toolbar_preparing")
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
+
+    //             .OnSelectionChanged("selection_changed")
+    .AutoNavigateToFocusedRow(true)
+    .Scrolling(s => s.Mode(GridScrollingMode.Virtual))
+    .Height(800)
+    .ShowBorders(true)
+    .ShowRowLines(true)
+    //    .CustomizeColumns(@<text> {  hint: "Clone",  icon: "repeat"}</text>)
+    .FocusedRowEnabled(true).FocusedRowIndex(0)
+    .OnInitNewRow("(e)=> { e.data.SalaryCurrencyView='руб.'; e.data.TypeIdView='Открыта' } ")
+
+    )
+
+
+    @using (Html.DevExtreme().NamedTemplate("TagBoxTemplate"))
+    {@(Html.DevExtreme().TagBox()
+               //.DataSource(d => d.Mvc().Controller("DataGridCustomEditors").LoadAction("Employees").Key("ID"))
+               .DataSource(ds => ds.Mvc().Controller("Vacancies").LoadAction("GetObjects").Key("Value"))
+               .Value(new JS("value"))
+               .ValueExpr("Value")
+               .DisplayExpr("Text")
+               .ShowSelectionControls(true)
+               //    .MaxDisplayedTags(3)
+               .ShowMultiTagOnly(false)
+               .ApplyValueMode(EditorApplyValueMode.UseButtons)
+               .SearchEnabled(true)
+               .OnValueChanged("function(e) { setValue(e.value); }")
+               .OnSelectionChanged("function(e) { component.updateDimensions(); }")
+           )}
+</div>
+
+<script>
+
+    var cellTemplate = (container, options) => {
+        var noBreakSpace = "\u00A0",
+            text = (options.value || []).map(element => {
+                return options.column.lookup.calculateCellValue(element);
+            }).join(", ");
+        container.text(text || noBreakSpace).attr("title", text);
+    }
+
+
+    var cloneRow = (e) => {
+        var clonedItem = $.extend({}, e.row.data);
+        delete clonedItem.RowId;
+        //     console.log(clonedItem);
+        var grid = e.component;
+        var ds = grid.getDataSource();
+        ds.store().insert(clonedItem).then((r) => {
+            var rowId = r.RowId;
+            ds.reload();
+            //            grid.navigateToRow(rowId);
+            //grid.selectRows([rowId], false);
+            grid.option("focusedRowKey", rowId);
+            //            var rowsCount = grid.length,
+            //            console.log(grid.getRowIndexByKey(rowId));
+            //            grid.editRow(grid.getVisibleRows().length-1);
+        });
+    }
+    /*
+    $(function () {
+
+        var c = $("#gridContainer").dxDataGrid("instance");
+        console.log(c);
+
+        $("#gridContainer").dxDataGrid({
+            columns : [{
+                type: "buttons",
+                buttons: ["edit", "delete", {
+                    text: "Копия",
+                    icon: "copy",
+                    hint: "My Command",
+                    onClick: function (e) {
+                        // Execute your command here
+                    }
+                }]
+            }]        });
+    });
+    */
+    function toolbar_preparing(e) {
+        var dataGrid = e.component;
+
+        e.toolbarOptions.items.unshift(
+
+            {
+
+                location: "before",
+                template: function () {
+                    return $("<div/>")
+                        .addClass("informer")
+                        .append(
+                            $("<h2 />")
+                                .addClass("count")
+                                .text(getGroupCount("CustomerStoreState")),
+                            $("<span />")
+                                .addClass("name")
+                                .text("Total Count")
+                        );
+                }
+            }/* {
+                    location: "before",
+                    widget: "dxSelectBox",
+                    options: {
+                        width: 200,
+                        items: [{
+                            value: "CustomerStoreState",
+                            text: "Grouping by State"
+                        }, {
+                            value: "Employee",
+                            text: "Grouping by Employee"
+                        }],
+                        displayExpr: "text",
+                        valueExpr: "value",
+                        value: "CustomerStoreState",
+                        onValueChanged: function (e) {
+                            dataGrid.clearGrouping();
+                            dataGrid.columnOption(e.value, "groupIndex", 0);
+                            $(".informer .count").text(getGroupCount(e.value));
+                        }
+                    }
+                }, {
+                    location: "before",
+                    widget: "dxButton",
+                    options: {
+                        text: "Collapse All",
+                        width: 136,
+                        onClick: function (e) {
+                            var expanding = e.component.option("text") === "Expand All";
+                            dataGrid.option("grouping.autoExpandAll", expanding);
+                            e.component.option("text", expanding ? "Collapse All" : "Expand All");
+                        }
+                    }
+                }
+
+                    , {
+                        location: "after",
+                        widget: "dxButton",
+                        options: {
+                            icon: "refresh",
+                            onClick: function () {
+                                dataGrid.refresh();
+                            }
+                        }
+                    }
+
+
+                    {
+                        location: "after",
+                        widget: "dxButton",
+                        options: {
+                            icon: "copy"
+                            ,
+                            text: "Вставить копию выделенной строки"
+                            ,
+                            onClick: function () {
+                                //                    dataGrid.refresh();
+                                //                        console.log(row.RowId);
+                                if (row !== null) {
+                                    //                            console.log(dataGrid);
+                                    //dataGrid.addRow(row);
+                                    var dataSource = dataGrid.getDataSource();
+                                    dataSource.store().insert(row).then(function (xx) {
+                                        var rowId = xx.RowId;
+                                        //                                console.log(xx.RowId);
+                                        dataSource.reload();
+                                        //dataGrid.refresh();
+                                        dataGrid.navigateToRow(rowId);
+                                        //                                var r = dataGrid.getRowIndexByKey(xx.RowId);
+                                        //                                console.log(getVisi);
+                                        dataGrid.selectRows([rowId], false);
+                                        //     console.log(dataGrid.getVisibleRows())
+                                    });
+                                    //dataGrid.editRow(dataGrid.getRowIndexByKey(rowId));
+
+
+                                }
+                            }
+
+
+                        }
+                    }
+*/
+
+        );
+    }
+
+
+    function getGroupCount(groupField) {
+        /*
+                var orders = [];
+
+                $("#gridContainer").dxDataGrid("instance")
+                    .option("dataSource")
+                    .store
+                    .load()
+                    .done(function(data) {
+                        orders = data;
+                    });
+
+                return DevExpress.data.query(orders)
+                    .groupBy(groupField)
+                    .toArray().length;
+                    */
+        return $("#gridContainer").dxDataGrid("instance").totalCount()
+    }
+
+</script>
+

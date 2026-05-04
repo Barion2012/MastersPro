@@ -1,0 +1,54 @@
+﻿@{
+    Layout = User.Identity.IsAuthenticated? "_MainLayout": "_yjLayout";
+    ViewData["Title"] = "Анкета соискателя";
+}
+
+@model Applicant;
+
+<div class="app-page-title">
+    <div class="page-title-wrapper">
+        <div class="page-title-heading">
+            @ViewData["Title"]
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center mb-3">
+    <div class="col-xl-5 col-lg-8 col-md-10">
+        <div class="p-2">
+
+        @{
+            String ItemClass = "mt-3 mb-3 anketa-item-class"; 
+        }
+        @(Html.DevExtreme().Form<Applicant>
+        ().ID("applicant-info")
+        .ShowValidationSummary(true)
+        .FormData(Model)
+        /*
+        .OnFieldDataChanged("saveField")
+        */
+        .ElementAttr("class", "address-form form-container")
+        .LabelLocation(FormLabelLocation.Top).ColCount(1)
+
+        .Items(items =>
+        {
+            items.AddSimpleFor(m => m.LastName).IsRequired(true).CssClass(ItemClass).Label(t => t.Text("Фамилия"));
+            items.AddSimpleFor(m => m.FirstName).IsRequired(true).CssClass(ItemClass).Label(t => t.Text("Имя"));
+            items.AddSimpleFor(m => m.MiddleName).IsRequired(true).CssClass(ItemClass).Label(t => t.Text("Отчество"));
+            items.AddSimpleFor(m => m.BirthDate).IsRequired(true).CssClass(ItemClass).Label(t => t.Text("Дата рождения"));
+            items.AddSimpleFor(m => m.BirthPlace).IsRequired(true).CssClass(ItemClass).Label(t => t.Text("Место рождения"));
+            items.AddSimpleFor(m => m.CitizenshipId).IsRequired(true).CssClass(ItemClass).Label(t => t.Text("Гражданство"));
+            items.AddSimpleFor(m => m.ActualPlace).IsRequired(true).CssClass(ItemClass).Label(t => t.Text("Место фактического нахождения"));
+            items.AddSimpleFor(m => m.Education).IsRequired(true).CssClass(ItemClass).Label(t => t.Text("Образование"));
+            items.AddSimpleFor(m => m.MarriedStatus).IsRequired(true).CssClass(ItemClass).Label(t => t.Text("Семейное положение"));
+            items.AddSimpleFor(m => m.DeviceNumber).Editor(e => e.TextBox().Mask("+7 (X00) 000-0000").MaskRules(new { X = new JS("/[0-9]/") })).IsRequired(true).CssClass(ItemClass).Label(t => t.Text("Мобильный телефон"));
+            items.AddSimpleFor(m => m.Profession).IsRequired(true).CssClass(ItemClass).Label(t => t.Text("Специальность"));
+            items.AddSimpleFor(m => m.Skils).IsRequired(true).CssClass(ItemClass).Label(t => t.Text("Виды строительных работ, которыми владеете"));
+            items.AddSimpleFor(m => m.Tools).IsRequired(true).CssClass(ItemClass).Label(t => t.Text("С каким инструментом работаете"));
+            items.AddSimpleFor(m => m.Hostel).IsRequired(true).CssClass(ItemClass).Label(t => t.Text("Жилье требуется?"));
+        })
+        )
+
+        </div>
+    </div>
+</div>

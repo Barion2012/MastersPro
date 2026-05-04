@@ -1,0 +1,39 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<AgregatorUser> SignInManager
+@inject UserManager<AgregatorUser> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    var user = await UserManager.GetUserAsync(User);
+
+
+    if (await UserManager.IsInRoleAsync(user, "MANAGER"))
+    {
+
+        <li>
+            <div class="header-btn-lg pr-0">
+                <div class="widget-content p-0">
+
+                    <div class="widget-content-wrapper">
+                        <div class="widget-content-right">
+                            <div class="btn-group">
+                                <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link">
+                                    <i class="nav-link-icon fa fa-edit"></i>
+                                    Рекрутер
+                                </a>
+                                <div tabindex="-1" role="menu" aria-hidden="true" class="dropdown-menu dropdown-menu-left">
+                                    <a asp-controller="Manager" asp-action="VacanciesList" tabindex="0" class="dropdown-item">Реестр вакансий</a>
+                                    <div tabindex="-1" class="dropdown-divider"></div>
+                                    <a asp-controller="Manager" asp-action="FeedbackList" tabindex="0" class="dropdown-item">Реестр откликов</a>
+                                    <div tabindex="-1" class="dropdown-divider"></div>
+                                    <a asp-controller="Manager" asp-action="ContractList" tabindex="0" class="dropdown-item">Реестр договоров</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </li>
+    }
+}
+

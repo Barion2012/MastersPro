@@ -1,0 +1,262 @@
+/*.dx-column-indicators {
+    float: unset !important;
+}
+
+.dx-datagrid-action.dx-cell-focus-disabled {
+    text-align: center !important;
+    vertical-align: middle !important;
+    background-color: rgba(75, 41, 4, 0.94);
+}*/
+
+
+#gridContainer .dx-datagrid-header-panel {
+    padding: 0;
+/*    background-color: rgba(75, 41, 4, 0.94);
+    */
+}
+
+    #gridContainer .dx-datagrid-header-panel .dx-toolbar {
+        margin: 0;
+        padding-right: 16px;
+        background-color: transparent;
+    }
+
+    #gridContainer .dx-datagrid-header-panel .dx-toolbar-items-container {
+        height: 70px;
+    }
+
+    #gridContainer .dx-datagrid-header-panel .dx-toolbar-before .dx-toolbar-item:not(:first-child) {
+        background-color: rgba(211, 113, 39, 0.60);
+    }
+
+    #gridContainer .dx-datagrid-header-panel .dx-toolbar-before .dx-toolbar-item:last-child {
+        padding-right: 10px;
+    }
+
+    #gridContainer .dx-datagrid-header-panel .dx-selectbox {
+        margin: 17px 10px;
+    }
+
+    #gridContainer .dx-datagrid-header-panel .dx-button {
+        margin: 17px 0;
+    }
+
+#gridContainer .informer {
+    height: 70px;
+    width: 130px;
+    text-align: center;
+    color: #fff;
+}
+
+#gridContainer .count {
+    padding-top: 15px;
+    line-height: 27px;
+    font-size: 28px;
+    margin: 0;
+    font-weight: normal;
+    font-family: "Helvetica Neue", "Segoe UI", Helvetica, Verdana, sans-serif;
+}
+
+@media (min-width: 360px) {
+
+    #video {
+        transform: scaleX(-1);
+        -o-transform: scaleX(-1);
+        -ms-transform: scaleX(-1);
+        -moz-transform: scaleX(-1);
+        -webkit-transform: scaleX(-1);
+        border: 1px solid black;
+        box-shadow: 2px 2px 3px black;
+        width: 240px;
+        height: 320px;
+    }
+
+    #startbutton {
+        display: block;
+        position: relative;
+        border: solid;
+        border-color: red;
+        background-color: transparent;
+        width: 120px;
+        height: 120px;
+        bottom: 200px;
+        left: 60px;
+    }
+
+}
+
+@media (min-width: 768px) {
+
+    #video {
+        transform: scaleX(-1);
+        -o-transform: scaleX(-1);
+        -ms-transform: scaleX(-1);
+        -moz-transform: scaleX(-1);
+        -webkit-transform: scaleX(-1);
+        border: 1px solid black;
+        box-shadow: 2px 2px 3px black;
+        width: 320px;
+        height: 240px;
+    }
+
+    #startbutton {
+        display: block;
+        position: relative;
+        border: solid;
+        border-color: red;
+        background-color: transparent;
+        width: 120px;
+        height: 120px;
+        bottom: 180px;
+        left: 80px;
+    }
+
+}
+
+
+
+#my-photo {
+    border: 1px solid black;
+    box-shadow: 2px 2px 3px gray;
+}
+
+
+#photo-canvas {
+    display:inline-block
+}
+    
+.camera {
+    width: 340px;
+    display: inline-block;
+}
+
+.output {
+    width: 340px;
+    display: inline-block;
+}
+
+
+
+.contentarea {
+    font-size: 16px;
+    font-family: "Lucida Grande", "Arial", sans-serif;
+    width: 760px;
+}
+
+.bool_box {
+  float: right;
+  background: url("bg.jpg") no-repeat center center;
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 585px;
+  width: 585px; }
+  .bool_box .bool_position {
+    position: absolute;
+    left: -15px;
+    top: 400px; }
+  .bool_box .bool {
+    position: relative;
+    border-radius: 100%;
+    overflow: hidden;
+    height: 130px;
+    width: 130px;
+    background: #bbb;
+    text-align: center;
+    line-height: 130px;
+    font-weight: bold;
+    color: #fff;
+    float: left;
+    margin: 0 20px 0 0; }
+    .bool_box .bool a {
+      color: #fff;
+      position: relative;
+      z-index: 10; }
+    .bool_box .bool:after {
+      background: #0a6aa157;
+      position: absolute;
+      left: 0;
+      top: 0;
+      content: ' ';
+      display: block;
+      height: 130px;
+      width: 130px; }
+    .bool_box .bool:hover {
+      cursor: pointer;
+ }
+  .bool_box .bool1 {
+    background: url("img_bool1.jpg") no-repeat center center; }
+  .bool_box .bool2 {
+    background: url("img_bool2.jpg") no-repeat center center; }
+  .bool_box .bool3 {
+    background: url("img_bool3.jpg") no-repeat center center; }
+
+.main {
+  width: 100%;
+  overflow: hidden; }
+  .main .go_img_work {
+    clear: both;
+    margin: auto;
+    /* padding-top: 61px; */
+    background: url(img.png) no-repeat center bottom;
+    width: 476px;
+    height: 315px; }
+  .main .block {
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    margin: 10px;
+    padding: 10px;
+    float: left;
+    width: 300px; }
+    .main .block .name {
+      font-size: 16px;
+      margin-bottom: 4px; }
+    .main .block a {
+      font-size: 14px;
+      display: block;
+      margin-left: 10px;
+      margin-bottom: 3px;
+      text-decoration: none;
+      color: #3f7db5; }
+      .main .block a:hover {
+        text-decoration: underline; }
+  .main .twobutton {
+    overflow: hidden;
+    border-radius: 10px;
+    background: #32639c;
+    width: 412px;
+    margin: 25px auto; }
+    .main .twobutton a {
+      color: #fff;
+      font-size: 18px;
+      padding: 20px;
+      display: inline-block;
+      border-radius: 10px;
+      text-decoration: none; }
+    .main .twobutton a.one {
+      background: #4384d0; }
+      .main .twobutton a.one:hover {
+        text-decoration: underline; }
+    .main .twobutton a.two:hover {
+      text-decoration: underline; }
+
+
+#gridContainer {
+    height: 620px;
+}
+
+.dx-datagrid-rowsview .dx-master-detail-row:not(.dx-datagrid-edit-form) > .dx-datagrid-group-space,
+.dx-datagrid-rowsview .dx-master-detail-row:not(.dx-datagrid-edit-form) .dx-master-detail-cell {
+    background-color: transparent;
+}
+
+.form-container {
+    padding: 5px;
+}
+
+.address-form{
+    margin: 10px;
+}
+.address-form label {
+    font-weight: bold;
+}

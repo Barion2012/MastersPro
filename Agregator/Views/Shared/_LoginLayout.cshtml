@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+@{ 
+    var main = "1991436da230dd8fb3c7";
+}
+<html lang="ru-RU">
+<head>
+
+    <environment include="Development">
+        <title>Your Job @ViewData["Title"] - Development</title>
+    </environment>
+    <environment exclude="Development">
+        <title>Your Job @ViewData["Title"]</title>
+    </environment>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Language" content="ru">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="qLabFirst">
+    <meta name="author" content="">
+    <meta name="msapplication-tap-highlight" content="no">
+    <link rel="apple-touch-icon" sizes="180x180" href="~/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="~/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="~/favicon-16x16.png">
+    <link rel="manifest" href="~/site.webmanifest">
+
+    <environment include="Development">
+        <link href="~/main.@(main).css" rel="stylesheet" asp-append-version="true">
+        <link rel="stylesheet" href="~/css/vendor.css" asp-append-version="true" />
+        <link href="~/css/site.css" rel="stylesheet" asp-append-version="true">
+        <link href="~/css/ext.css" rel="stylesheet" asp-append-version="true">
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="~/css/vendor.css" asp-append-version="true" />
+        <link href="~/site.min.css" rel="stylesheet" asp-append-version="true">
+    </environment>
+    <link rel="stylesheet" type="text/css" href="~/css/style.css" asp-append-version="true">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+    <script src="~/js/vendor.js" asp-append-version="true"></script>
+</head>
+
+<body>
+    
+    <header class="min-vh-25">
+        <div class="header-logo"></div>
+    </header>
+
+    <main class="min-vh-60">
+    <div class="container app-theme-white body-tabs-shadow">             
+        <div class="row align-items-top min-vh-60">                    
+            <div class="bg-white justify-content-center col-md-12">                    
+             
+                @RenderBody()
+           
+            </div>
+        </div>
+    </div>
+    </main>    
+
+    <footer class="bg-light text-body min-vh-15">
+        <div class="container">
+            <div class="row min-vh-15 align-items-center">
+                <div class="col-md-10 mx-auto p-3">                    
+                    <div>
+                        Регистрация и дальнейшее использование нашего сервиса предполагает, что Вы ознакомились с <a href="/pdf/Соглашение_о_неразглашении_КИ.pdf" class="footer-link" target="_blank"> политикой конфиденциальности</a>.
+                    </div>
+
+                    <div class="mt-2">
+                        Регистрируясь на сайте Вы соглашаетесь с условиями <a href="/pdf/Соглашение_Пользователя.pdf" target="_blank" class="footer-link">пользовательского соглашения</a>.
+                    </div>
+
+                    <div class="mt-2">
+                        &copy;&nbsp;OOO «Кьюлаб Фёст» — Your Job. Все права защищены. 2021 г.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/assets/scripts/main.@(main).js"></script>
+    <environment include="Development">
+        <script type="text/javascript" src="~/assets/scripts/app.js" asp-append-version="true"></script>
+        <script type="text/javascript" src="~/assets/scripts/ext.js" asp-append-version="true"></script>
+    </environment>
+    <environment exclude="Development">
+        <script type="text/javascript" src="~/app.min.js" asp-append-version="true"></script>
+    </environment>
+
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>
+
+@RenderSection("Templates", required: false)

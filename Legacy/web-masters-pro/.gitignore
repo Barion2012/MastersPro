@@ -1,0 +1,13 @@
+.env
+/.fleet
+/.idea
+/.nova
+/.vscode
+/.zed
+/.layouts
+/.github
+*.crt
+*.key
+*.pem
+*:Zone.Identifier
+*.log

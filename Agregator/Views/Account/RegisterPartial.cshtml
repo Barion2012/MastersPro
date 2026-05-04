@@ -1,0 +1,37 @@
+﻿@model MainLoginModel
+
+@using (Html.BeginForm("RegisterPartial", "Account", FormMethod.Post, new { id = "register-form", @class = "form", role = "form", action = "javascript:void(null);" }))
+{
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="form-group">
+        <input asp-for="Register.Email" class="form-control" type="email" autocomplete="off" placeholder="e-mail" aria-describedby="emailHelp">
+        <span asp-validation-for="Register.Email" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <input asp-for="Register.Password" class="form-control" type="password" placeholder="пароль" autocomplete="off">
+        <span asp-validation-for="Register.Password" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <input asp-for="Register.ConfirmPassword" class="form-control" autocomplete="off" type="password" placeholder="повторите пароль">
+        <span asp-validation-for="Register.ConfirmPassword" class="text-danger"></span>
+    </div>
+    <input type="hidden" asp-for="RememberMe" id="RememberMe1" />
+
+    <button class="btn btn-success" type="submit">
+        Зарегистрироваться
+    </button>
+}
+
+<script>
+   $("form#register-form").on('submit', (f) => fetch('/Account/RegisterPartial',{
+                    method: 'post',
+                    headers: { 'Accept': 'text/html' }
+                    , body: new FormData(f.target),
+                })
+                .then(r => r.text())
+                .then(r => $('#tab-register-form').html(r))
+        )
+</script>

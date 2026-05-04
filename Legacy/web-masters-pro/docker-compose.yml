@@ -1,0 +1,132 @@
+services:
+  openresty:
+    image: openresty/openresty:1.25.3.1-0-bullseye
+    container_name: ${APP_NAME}-openresty
+    environment:
+      - APP_DOMAIN=${APP_DOMAIN}
+      - BUILD_ENV=${BUILD_ENV}
+    ports:
+      - "80:80"
+      - "443:443"
+    expose:
+      - "80"
+      - "443"
+    depends_on:
+      - laravel
+      - nuxt
+    volumes:
+      - ./nginx/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
+      - ./nginx/certs:/etc/ssl
+      - ./laravel/public/build:/usr/share/nginx/html/build
+      - ./nginx/log:/var/log/nginx
+    networks:
+      app-network:
+        aliases:
+          - ${APP_DOMAIN}
+  nuxt:
+    restart: unless-stopped
+    container_name: ${APP_NAME}-nuxt
+    build:
+      context: ./nuxt
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./nuxt:/var/www/html
+      - ./.env:/var/www/html/.env
+      - /var/www/html/node_modules
+      - /var/www/html/.nuxt
+    ports:
+      - "3000:3000"
+      - "24678:24678"
+      - "5173:5173"
+    networks:
+      - app-network
+    depends_on:
+      laravel:
+        condition: service_started
+    environment:
+      - BUILD_ENV=${BUILD_ENV}
+  laravel:
+    restart: unless-stopped
+    container_name: ${APP_NAME}-laravel
+    expose:
+      - "9000"
+      - "9090"
+      - "8080"
+    build:
+      context: ./laravel
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./laravel/php.ini:/usr/local/etc/php/conf.d/php.ini
+      - ./laravel:/var/www/html
+      - ./.env:/var/www/html/.env
+      - ./laravel/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf
+      - /var/www/html/vendor
+      - /var/www/html/node_modules
+    networks:
+      - app-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+  mysql:
+    image: mysql:8.0
+    container_name: ${APP_NAME}-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-p${MYSQL_ROOT_PASSWORD}", "-h", "localhost" ]
+      interval: 5s
+      timeout: 15s
+      retries: 30
+      start_period: 60s
+    ports:
+      - "3306:3306"
+    networks:
+      - app-network
+  vitepress:
+    container_name: ${APP_NAME}-vitepress
+    build:
+      context: ./vitepress
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./vitepress:/var/www/html
+      - ./.env:/var/www/html/.env
+      - /var/www/html/node_modules
+    ports:
+      - "5174:5174"
+    networks:
+      - app-network
+    environment:
+      - BUILD_ENV=${BUILD_ENV}
+  redis:
+    image: redis:7.4.2
+    container_name: ${APP_NAME}-redis
+    restart: unless-stopped
+    expose:
+      - "6379"
+    volumes:
+      - redis_data:/data
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
+    networks:
+      - app-network
+  cryptopro:
+    container_name: ${APP_NAME}-cryptopro
+    build:
+      context: ./cryptopro
+      dockerfile: ./Dockerfile
+    expose:
+      - "80"
+    networks:
+      - app-network
+volumes:
+  db_data:
+  redis_data:
+networks:
+  app-network:
+    internal: false
+    driver: bridge

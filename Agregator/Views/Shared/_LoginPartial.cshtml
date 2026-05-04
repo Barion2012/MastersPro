@@ -1,0 +1,73 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<AgregatorUser> SignInManager
+@inject UserManager<AgregatorUser> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    var user = await @UserManager.GetUserAsync(User);
+    <div class="widget-content-left">
+
+        <div class="btn-group">
+            <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="p-0 btn">
+                <img class="profile__nav-btn" src="/img/li-marker.svg" alt="Меню профиля" />
+                <img class="profile__photo" src="@(Url.Action("Avatar","User"))" alt="Фото профиля" />
+            </a>
+            <div tabindex="-1" role="menu" aria-hidden="true" class="dropdown-menu dropdown-menu-right">
+                <a asp-action="Profile" asp-controller="User" tabindex="0" class="dropdown-item">Мой профиль</a>
+                <div tabindex="-1" class="dropdown-divider"></div>
+                <a asp-controller="User" asp-action="MyRequests" tabindex="0" class="dropdown-item disabled">Мои отклики</a>
+                <div tabindex="-1" class="dropdown-divider"></div>
+                <a asp-action="Chat" asp-controller="User" tabindex="0" class="dropdown-item">Чат с менеджером</a>
+                <div tabindex="-1" class="dropdown-divider"></div>
+                <a asp-controller="User" asp-action="PersonalInfo" tabindex="0" class="dropdown-item">Моя персональная информация</a>
+                <div tabindex="-1" class="dropdown-divider"></div>
+                <a asp-action="MyContracts" asp-controller="User" tabindex="0" class="dropdown-item">Мои договоры</a>
+                <div tabindex="-1" class="dropdown-divider"></div>
+                <a asp-action="MyMoney" asp-controller="User" tabindex="0" class="dropdown-item disabled">Моя зарплата</a>
+                <div tabindex="-1" class="dropdown-divider"></div>
+                <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link">
+                    <i class="nav-link-icon fa fa-cog"></i>
+                    Безопасность
+                </a>
+                <div tabindex="-1" role="menu" aria-hidden="true" class="dropdown-menu dropdown-menu-right">
+                    <a asp-action="ChangePassword" asp-controller="Account" tabindex="0" class="dropdown-item">Смена пароля</a>
+                    <div tabindex="-1" class="dropdown-divider"></div>
+                    <a asp-action="TwoFactorAuthentication" asp-controller="Account" tabindex="0" class="dropdown-item">Двухфакторная авторизация</a>
+                    <div tabindex="-1" class="dropdown-divider"></div>
+                    <a asp-action="Settings" asp-controller="Account" tabindex="0" class="dropdown-item">Насторйки</a>
+                </div>
+                <div tabindex="-1" class="dropdown-divider"></div>
+                <form class="form-inline" asp-action="Logout" asp-controller="Account" method="post">
+                    <button type="submit" tabindex="0" class="dropdown-item">Выйти</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="widget-content-left ml-3">
+        <div class="font-weight-bold">@user.Name&nbsp;@user.Surname</div>
+        <div class="text-primary">@user.UserName</div>
+    </div>
+
+}
+@*
+else
+{
+    <div class="widget-content-left">
+        <ul class="header-menu nav">
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">
+                    <i class="nav-link-icon fa fa-user-plus"></i>
+                    Регистрация
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">
+                    <i class="nav-link-icon fa fa-user"></i>
+                    Авторизация
+                </a>
+            </li>
+        </ul>
+    </div>
+}
+
+*@

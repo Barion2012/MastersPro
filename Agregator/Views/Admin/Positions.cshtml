@@ -1,0 +1,28 @@
+﻿@{
+    ViewData["Title"] = "Справочник: Название вакансий(позиций)";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@(Html.DevExtreme().DataGrid<Agregator.Data.Position>()
+    .DataSource(ds => ds.Mvc()
+        .Controller("Positions")
+        .LoadAction("Get")
+        .InsertAction("Post")
+        .UpdateAction("Put")
+        .DeleteAction("Delete")
+        .Key("RowId")
+    )
+    .RemoteOperations(true)
+    .Columns(columns => {
+
+        columns.AddFor(m => m.RowId).AllowEditing(false);
+
+        columns.AddFor(m => m.Name);
+    })
+    .Editing(e => e
+        .AllowAdding(true)
+        .AllowUpdating(true)
+        .AllowDeleting(true)
+    )
+)

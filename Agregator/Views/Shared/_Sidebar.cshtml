@@ -1,0 +1,172 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<AgregatorUser> SignInManager
+@inject UserManager<AgregatorUser> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    var user = await @UserManager.GetUserAsync(User);
+     
+    <div class="scrollbar-sidebar">
+
+        <div class="app-sidebar__inner">
+            <ul class="vertical-nav-menu">
+
+                <li class="d-lg-none d-flex flex-row pt-4">
+                    <div><img class="profile__photo" src="@(Url.Action("Avatar","User"))" alt="Фото профиля" /></div>
+                    <div class="widget-content-left ml-3">
+                        <div class="font-weight-bold">@user.Name&nbsp;@user.Surname</div>
+                        <div class="text-primary">@user.UserName</div>
+                    </div>
+                </li>
+
+                <li class="app-sidebar__heading">Your Job</li>
+
+                <li>
+                    <a href="#">
+                        <i class="metismenu-icon fa fa-home"></i>Главное
+                        <i class="metismenu-state-icon pe-7s-angle-down-circle caret-left"></i>
+                    </a>
+                    <ul class="mm-show">
+                        <li>
+                            <a asp-action="Profile" asp-controller="User">
+                                <i class="metismenu-icon"></i>Мой профиль
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-controller="User" asp-action="MyRequests" class="disabled">
+                                <i class="metismenu-icon"></i>Мои отклики
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-controller="User" asp-action="PersonalInfo">
+                                <i class="metismenu-icon"></i>Моя персональная информация
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-controller="User" asp-action="Chat">
+                                <i class="metismenu-icon"></i>Чат с менеджером
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-action="MyContracts" asp-controller="User">
+                                <i class="metismenu-icon"></i>Мои договоры
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-action="MyMoney" asp-controller="User" class="disabled">
+                                <i class="metismenu-icon"></i>Моя зарплата
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                @if (await UserManager.IsInRoleAsync(user, "MANAGER")
+       || await UserManager.IsInRoleAsync(user, "ADMIN")
+       )
+                {
+
+                    <li>
+                        <a href="#">
+                            <i class="metismenu-icon fa fa-edit"></i> Рекрутер
+                            <i class="metismenu-state-icon pe-7s-angle-down-circle caret-left"></i>
+                        </a>
+                        <ul>
+                            <li>
+                                <a asp-controller="Manager" asp-action="VacanciesList">Реестр вакансий</a>
+                            </li>
+                            <li>
+                                <a asp-controller="Manager" asp-action="FeedbackList">Реестр откликов</a>
+                            </li>
+                            <li>
+                                <a asp-controller="Manager" asp-action="ContractList">Реестр договоров</a>
+                            </li>
+                        </ul>
+                    </li>
+                }
+
+                @if (await UserManager.IsInRoleAsync(user, "ADMIN"))
+                {
+
+                    <li>
+                        <a href="#">
+                            <i class="metismenu-icon fa fa-universal-access"></i>Администратор
+                            <i class="metismenu-state-icon pe-7s-angle-down-circle caret-left"></i>
+                        </a>
+                        <ul>
+                            <li>
+                                <a asp-controller="Admin" asp-action="Grid">
+                                    <i class="metismenu-icon"></i>Пользователи
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-controller="Admin" asp-action="Positions">
+                                    <i class="metismenu-icon"></i>Название вакансий(позиций)
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-controller="Admin" asp-action="DevelopmentPlan">
+                                    <i class="metismenu-icon"></i>План разработки
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                }
+
+                @if (await UserManager.IsInRoleAsync(user, "ACCOUNTANT")
+                    || await UserManager.IsInRoleAsync(user, "ADMIN"))
+                {
+
+                    <li>
+                        <a href="#">
+                            <i class="metismenu-icon fa fa-receipt"></i>Отчетность
+                            <i class="metismenu-state-icon pe-7s-angle-down-circle caret-left"></i>
+                        </a>
+                        <ul>
+                            <li>
+                                <a asp-controller="Documents" asp-action="Sept" >
+                                    <i class="metismenu-icon"></i>Сентябрь-2021
+
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                }
+
+                <li>
+                    <a href="#">
+                        <i class="metismenu-icon fa fa-cog"></i> Безопасность
+                        <i class="metismenu-state-icon pe-7s-angle-down-circle caret-left"></i>
+                    </a>
+                    <ul>
+                        <li>
+                            <a asp-action="ChangePassword" asp-controller="Account">
+                                <i class="metismenu-icon"></i>Смена пароля
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-action="TwoFactorAuthentication" asp-controller="Account">
+                                <i class="metismenu-icon"></i>Двухфакторная авторизация
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-action="Settings" asp-controller="Account">
+                                <i class="metismenu-icon"></i>Насторйки
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li>
+                    <form id="form-exit" asp-action="Logout" asp-controller="Account" method="post">
+                        <a href="#" onclick="document.forms['form-exit'].submit()">
+                            <i class="metismenu-icon fa fa-times-circle"></i>Выйти
+                            <i class="metismenu-state-icon pe-7s-angle-right-circle caret-left"></i>
+                        </a>
+                    </form>
+
+                </li>
+
+            </ul>
+        </div>
+    </div>
+}

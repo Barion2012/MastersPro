@@ -1,0 +1,39 @@
+@mixin FontFace($fontFamily, $fileName, $weight, $style)
+{
+    @font-face {
+        font-family: $fontFamily;
+        font-display: swap;
+        src: url("#{$fileName}.woff") format("woff"), url("#{$fileName}.woff2") format("woff2");
+        font-weight: #{$weight};
+        font-style: #{$style};
+    }
+}
+@include FontFace("OpenSans", "~/assets/fonts/OpenSans/OpenSans-SemiBoldItalic", "700", "italic");
+@include FontFace("OpenSans", "~/assets/fonts/OpenSans/OpenSans-SemiBold", "700", "regular");
+@include FontFace("OpenSans", "~/assets/fonts/OpenSans/OpenSans-Regular", "400", "regular");
+@include FontFace("OpenSans", "~/assets/fonts/OpenSans/OpenSans-LightItalic", "300", "italic");
+@include FontFace("OpenSans", "~/assets/fonts/OpenSans/OpenSans-Light", "300", "regular");
+@include FontFace("OpenSans", "~/assets/fonts/OpenSans/OpenSans-Italic", "400", "italic");
+@include FontFace("OpenSans", "~/assets/fonts/OpenSans/OpenSans-ExtraBoldItalic", "800", "italic");
+@include FontFace("OpenSans", "~/assets/fonts/OpenSans/OpenSans-ExtraBold", "800", "regular");
+@include FontFace("OpenSans", "~/assets/fonts/OpenSans/OpenSans-BoldItalic", "700", "italic");
+@include FontFace("OpenSans", "~/assets/fonts/OpenSans/OpenSans-Bold", "700", "regular");
+
+@include FontFace("Montserrat", "~/assets/fonts/Montserrat/Montserrat-ThinItalic", "100", "italic");
+@include FontFace("Montserrat", "~/assets/fonts/Montserrat/Montserrat-Thin", "100", "regular");
+@include FontFace("Montserrat", "~/assets/fonts/Montserrat/Montserrat-SemiBoldItalic", "700", "italic");
+@include FontFace("Montserrat", "~/assets/fonts/Montserrat/Montserrat-SemiBold", "700", "regular");
+@include FontFace("Montserrat", "~/assets/fonts/Montserrat/Montserrat-Regular", "400", "regular");
+@include FontFace("Montserrat", "~/assets/fonts/Montserrat/Montserrat-MediumItalic", "500", "italic");
+@include FontFace("Montserrat", "~/assets/fonts/Montserrat/Montserrat-Medium", "500", "regular");
+@include FontFace("Montserrat", "~/assets/fonts/Montserrat/Montserrat-LightItalic", "300", "italic");
+@include FontFace("Montserrat", "~/assets/fonts/Montserrat/Montserrat-Light", "300", "regular");
+@include FontFace("Montserrat", "~/assets/fonts/Montserrat/Montserrat-Italic", "400", "italic");
+@include FontFace("Montserrat", "~/assets/fonts/Montserrat/Montserrat-ExtraLightItalic", "300", "italic");
+@include FontFace("Montserrat", "~/assets/fonts/Montserrat/Montserrat-ExtraLight", "300", "regular");
+@include FontFace("Montserrat", "~/assets/fonts/Montserrat/Montserrat-ExtraBoldItalic", "800", "italic");
+@include FontFace("Montserrat", "~/assets/fonts/Montserrat/Montserrat-ExtraBold", "800", "regular");
+@include FontFace("Montserrat", "~/assets/fonts/Montserrat/Montserrat-BoldItalic", "700", "italic");
+@include FontFace("Montserrat", "~/assets/fonts/Montserrat/Montserrat-Bold", "700", "regular");
+@include FontFace("Montserrat", "~/assets/fonts/Montserrat/Montserrat-BlackItalic", "900", "italic");
+@include FontFace("Montserrat", "~/assets/fonts/Montserrat/Montserrat-Black", "900", "regular");

@@ -1,0 +1,158 @@
+﻿/*main elements*/
+.header-logo{
+    background-image: url(/assets/fonts/logo-your-job.svg);
+	background-position: center;
+	background-size: contain;
+	background-repeat: no-repeat;
+	height: 10rem;
+}
+
+.footer-link, .footer-text {
+    font-size:1.0rem !important;
+}
+
+/*min-height*/
+.min-h-15{
+	position: relative;
+	min-height: 15%;
+}
+
+.min-h-20{
+	position: relative;
+	min-height: 20%;
+}
+
+.min-h-25{
+	position: relative;
+	min-height: 25%;
+}
+
+.min-h-30{
+	position: relative;
+	min-height: 30%;
+}
+
+.min-h-50{
+	position: relative;
+	min-height: 50%;
+}
+
+.min-h-60{
+	position: relative;
+	min-height: 60%;
+}
+
+.min-h-70{
+	position: relative;
+	min-height: 70%;
+}
+
+.min-h-75{
+	position: relative;
+	min-height: 75%;
+}
+
+.min-h-80{
+	position: relative;
+	min-height: 80%;
+}
+
+.min-h-85{
+	position: relative;
+	min-height: 85%;
+}
+
+.min-h-100{
+	position: relative;
+	min-height: 100%;
+}
+/*vh*/
+.min-vh-15{
+	position: relative;
+	min-height: 15vh;
+}
+
+.min-vh-20{
+	position: relative;
+	min-height: 20vh;
+}
+
+.min-vh-25{
+	position: relative;
+	min-height: 25vh;
+}
+
+.min-vh-30{
+	position: relative;
+	min-height: 30vh;
+}
+
+.min-vh-50{
+	position: relative;
+	min-height: 60vh;
+}
+
+.min-vh-60{
+	position: relative;
+	min-height: 60vh;
+}
+
+.min-vh-70{
+	position: relative;
+	min-height: 70vh;
+}
+
+.min-vh-80{
+	position: relative;
+	min-height: 80vh;
+}
+
+.min-vh-85{
+	position: relative;
+	min-height: 85vh;
+}
+
+/*max-height*/
+.mh-80{
+	max-height: 80%;
+}
+
+/*height*/
+.h-80{
+	height: 80%;
+}
+
+/*buttons*/
+.btn-xl{
+    padding: 1.0rem;
+    font-size: 1.2rem;
+    border-radius: 0.3rem;
+}
+
+/*profile*/
+.profile-photo{
+	max-width:200px;
+	width:100%;
+}
+
+/*.app-sidebar:hover{
+	min-width:315px !important;
+}
+@media (max-width: 991.98px){
+	.app-sidebar{
+		width:315px !important;
+	}
+}*/
+
+.button-indicator {
+    height: 20px !important;
+    width: 20px !important;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+/*chat*/
+.chat-box-robot {
+	background-color: #eee !important;
+}

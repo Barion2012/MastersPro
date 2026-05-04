@@ -1,0 +1,65 @@
+﻿<div class="form-group" id="requestAuth" style="display: block">
+    <label>Авторизированный номер:</label>
+    @(Html.DevExtreme().TextBox()
+        //.Hint("По телефону")
+        .Name("LoginPhone").ID("form__loginPhone")
+.Mask("+7-(000)-000-0000")
+//.Placeholder("Телефон")
+.Width(250)
+)
+    <br />
+    <button type="button" id="verify-phone" class="btn btn-primary mt-1">Вход</button>
+
+</div> 
+
+<div class="form-group" id="putCode" style="display: none">
+    <p>
+        На указанный Вами номер был отправлен 4-значный код потверждения.
+        Для входа введите его здесь.
+    </p>
+    @(Html.DevExtreme().TextBox().Hint("Быстрый вход по телефону").Name("LoginPhoneCode").ID("form__loginPhoneCode").Mask("0000").Width(60).OnKeyUp("OnPhoneCodeKeyDown"))
+</div>
+
+
+
+<script>
+
+    $("#verify-phone").on('click', f => fetch('/api/loginphone', {
+        ///api/v2/auth/loginphone
+
+        method: 'post'
+        , headers: { 'Accept': 'application/json' }
+        , body: JSON.stringify({ phone: '+7' + $("input[name='LoginPhone']").val() })
+    })
+        .then(r => {
+            if (r.status === 200) {
+                $("#requestAuth").hide();
+                $("#putCode").show();
+            }
+        })
+    );
+
+    function OnPhoneCodeKeyDown(e) {
+
+        var code = $("input[name='LoginPhoneCode']").val();
+
+        if (code.length === 4) {
+             fetch('/api/signinwithphone', {
+                method: 'post'
+                , headers: { 'Accept': 'application/json' }
+                , body: JSON.stringify({
+                    phone: '+7' + $("input[name='LoginPhone']").val()
+                    , rememberMe: $("input[name='RememberMe']").val()
+                    , code: code
+                })
+            })
+                .then(r => {
+                    if (r.ok) {
+                        let params = new URLSearchParams(location.search);
+                        location = params.get('ReturnUrl') ?? '/'
+                    }
+                });
+        }
+    }
+
+</script>

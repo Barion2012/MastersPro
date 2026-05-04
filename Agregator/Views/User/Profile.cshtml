@@ -1,0 +1,236 @@
+@model ProfileModel
+@{
+    ViewData["Title"] = "Мой профиль";
+}
+
+<div class="app-page-title">
+    <div class="page-title-wrapper">
+        <div class="page-title-heading">
+            <div>
+                @ViewData["Title"]
+                <div class="page-title-subheading">
+
+                    
+@*        Данные Вашего личного профиля должны заполнятся строго в соответствии с паспортом.*@
+        Внимание! Заполнение личного профиля - это первый шаг с которого начинается использование нашего сервиса.
+        Следите что бы информация была актуальной и соответствовала Вашим документам.
+        После заполнения всех необходимых данных Вы сможете подать заявки на открытые вакансии.
+       
+@*
+         В случае одобрения Вашей кандидатуры данные у работодателя будут обновлятся в соответствии с
+         внесенными изменениями. Телефон будет передан работодателю только после подтверждения.
+         Для подтверждения телефона обязательно указывть код страны и не использовать другие символы, кроме цифр.
+         Например +79261234567
+*@
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<partial name="_StatusMessage" for="@TempData["StatusMessage"]" /> 
+
+<form class="needs-validation" novalidate="" id="profile-form" method="post" enctype="multipart/form-data">
+    <div class="row align-items-center justify-content-center">
+
+        <div class="col-xl-2">
+            <div class="main-card mb-3 card">
+                <div class="card-body">
+                    <h5 class="card-title">Фотография</h5>
+
+                    <div class="text-center">
+
+                        <div class="page-title-actions">
+                            @if (Model.Face != null)
+                            {<img class='profile-photo' id="my-photo" src="data:image/jpeg;base64,@(Convert.ToBase64String(Model.Face))" />}
+                        </div>
+
+
+                        <div class="btn mb-2 mt-1">
+                            <input asp-for="Photo" class="form-control-file" type="file" />
+                        </div>
+
+                        <div class="mb-2">
+                            <button type="button" id="make-selfportrait" class="btn-shadow btn btn-dark" data-toggle="modal" data-target=".modal-selfportrait">Автопортрет</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-10">
+            <div class="main-card mb-3 card">
+                <div class="card-body">
+                    <h5 class="card-title">Основная информация</h5>
+                    <div class="form-row">
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="UserName"></label>
+                            <input asp-for="UserName" class="form-control" disabled />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="PhoneNumber"></label>
+                            <div class="input-group">
+                                <!--input asp-for="PhoneNumber" class="form-control" required="" / -->
+                                @(Html.DevExtreme().TextBox().InputAttr("class","form-control").Name("PhoneNumber").ID("PhoneNumber").Mask("+7-(000)-000-0000").Width(250).Value(Model.PhoneNumber?.Substring(2)))
+                                <div class="input-group-append">
+                                    @if (Model.phoneNumberConfirmed)
+                                    {
+                                        <button type="button" class="btn disabled btn-success" >Подтвержден</button> 
+                                    }
+                                    else if (!string.IsNullOrEmpty(Model.PhoneNumber))
+                                    {
+                                        <button type="button" id="verify-phone" class="btn btn-secondary" data-toggle="modal" data-target=".modal-verify-phone">Потвердить</button>
+                                    }
+                                </div>
+                            </div>
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+
+                        </div>
+
+                    </div>
+                    <div class="form-row">
+
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="Surname"></label>
+                            <input asp-for="Surname" class="form-control" required="" />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="Name"></label>
+                            <input asp-for="Name" class="form-control" required="" />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="Middlename"></label>
+                            <input asp-for="Middlename" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-3 mb-3">
+                            <label asp-for="Birthday"></label>
+                            <input asp-for="Birthday" class="form-control" required="" />
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label asp-for="Male"></label><br />
+                            <div role="group" class="btn-group btn-group-toggle" data-toggle="buttons">
+                                <label id="Label_Female" class="mb-2 mr-2 btn-transition btn btn-outline-focus @(Model.Female=="on"?"focus active":"")">
+                                    <input type="radio" asp-for="Female" value='@(Model.Female=="on"?"on":"")' autocomplete="off" />
+                                    Женский
+                                </label>
+                                <label id="Label_Male" class="mb-2 mr-2 btn-transition btn btn-outline-focus @(Model.Male=="on"?"focus active":"")">
+                                    <input type="radio" asp-for="Male" value='@(Model.Male=="on"?"on":"")' autocomplete="off" />
+                                    Мужской
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label asp-for="Citizenship"></label>
+                            <select asp-for="Citizenship" placeholder="Гражданином какой страны Вы являетесь" class="form-control">
+                                @foreach (var c in Model.Countries)
+                                {
+                                    @if (Model.Citizenship == c.Id)
+                                    {
+                                        <option value="@c.Id" selected>@c.CountryName</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@c.Id">@c.CountryName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+    <div class="row">
+
+        <div class="col-md-12 text-center p-5">
+            <div class="custom-checkbox custom-control custom-control-inline">
+                <input type="checkbox" asp-for="agreeRegFNS" class="custom-control-input" required>
+                <label class="custom-control-label" asp-for="agreeRegFNS">Даю согласие стать самозанятым в Тинькофф и принимаю <a href="https://acdn.tinkoff.ru/static/documents/docs-data-transfer-conditions-self-employed.pdf" class="footer-link" target="_blank">оферту.</a></label>
+            </div>
+            <div class="mt-3"><button id="update-profile-button" type="submit" class="btn btn-primary">Сохранить</button></div>
+        </div>
+
+    </div>
+    </form>
+
+
+@section Templates {
+
+
+    <div class="modal fade modal-selfportrait" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="camereModalTitle">Автопортрет</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="allow"><p class="bg-danger text-black-50"><b>Внимание! Разрешите использовать камеру, если появится соответсвующее окно.</b></p></div>
+
+                    <div class="row">
+                        <div class="col-10">
+                            <div class="camera mb-2">
+                                <video id="video" autoplay="autoplay">Видеопоток недоступен</video>
+                                <div id="startbutton"></div>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div>
+                                <button id="snap-selfportrait" type="button" class="mb-2 btn-transition btn btn-outline-alternate">Фото</button>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <canvas id="photo-canvas" width="240" height="240"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="stop-selfportrait" type="button" class="btn btn-secondary disabled" data-dismiss="modal">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade modal-verify-phone" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="vphModalTitle">Подтверждение номера</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p>
+                                Мы отправили код подтверждения на номер <span id="dial-phone" />
+                                Введите код, который вы получите, чтобы подтвердить свой номер телефона.
+                            </p>
+                                <div id="invalidCode" class="text-danger"></div>
+
+                                <div class="form-group">
+                                    <label for="VerificationCode">Код подтверждения:</label>
+                                    <input id="VerificationCode" class="form-control" type="number" />
+                                </div>
+                                <!--button id="VerifyPhone" type="button" class="btn btn-primary">Подтверждение</!button -->
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button id="verfied" type="button" class="btn btn-secondary" data-dismiss="modal">ОК</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}

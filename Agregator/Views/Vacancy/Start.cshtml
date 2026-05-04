@@ -1,0 +1,24 @@
+﻿@model MainLoginModel
+
+@{
+    Layout = "_LoginLayout";
+    ViewData["Title"] = "Главная";
+}
+
+<div class="conteiner position-relative">
+    <div class="row justify-content-center">
+        <div class="col-md-10 text-center">
+
+            <h1 class="text-body display-5">Агрегатор вакансий для самозанятых</h1>
+
+            <div class="mt-5">
+                <form method="GET" asp-action="VacancyIndex" asp-controller="Vacancy">
+                    <button class="btn btn-success btn-xl" type="submit">
+                        Найти вакансии
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>

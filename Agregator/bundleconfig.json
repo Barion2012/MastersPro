@@ -1,0 +1,70 @@
+[
+  {
+    "outputFileName": "wwwroot/site.min.css",
+    "inputFiles": [
+      "wwwroot/main.1991436da230dd8fb3c7.css",
+      "wwwroot/css/site.css",
+      "wwwroot/css/ext.css"
+
+    ],
+
+    "minify": {
+      "enabled": false
+
+    }
+
+  },
+  {
+    "outputFileName": "wwwroot/app.min.js",
+    "inputFiles": [
+      "wwwroot/assets/scripts/main.1991436da230dd8fb3c7.js",
+      "wwwroot/assets/scripts/app.js",
+      "wwwroot/assets/scripts/ext.js"
+
+    ],
+    "minify": {
+      "enabled": true
+
+    },
+    "sourceMap": false
+  },
+
+  {
+    "outputFileName": "wwwroot/js/dx.aspnet.js",
+    "inputFiles": [
+
+      "wwwroot/js/devextreme/aspnet/dx.aspnet.mvc.js",
+      "wwwroot/js/devextreme/aspnet/dx.aspnet.data.js",
+      "wwwroot/js/devextreme/localization/dx.messages.ru.js"
+
+    ],
+    "minify": {
+      "enabled": true
+
+    },
+    "sourceMap": false
+  },
+
+  {
+    "outputFileName": "wwwroot/css/vendor.css",
+    "inputFiles": [
+      "wwwroot/css/devextreme/dx.common.css",
+      "wwwroot/css/devextreme/dx.greenmist.css"
+    ],
+    "minify": {
+      "enabled": true
+    }
+  },
+  {
+    "outputFileName": "wwwroot/js/vendor.js",
+    "inputFiles": [
+      "wwwroot/js/devextreme/jquery.min.js",
+      "wwwroot/js/devextreme/dx.all.js",
+      "wwwroot/js/dx.aspnet.js"
+    ],
+    "minify": {
+      "enabled": false
+    }
+  }
+
+]

@@ -1,0 +1,144 @@
+﻿@model IList<MyContractModel>
+    
+@{
+    ViewData["Title"] = "Мои договоры";
+}
+
+<div class="app-page-title">
+    <div class="page-title-wrapper">
+        <div class="page-title-heading">
+            @ViewData["Title"]
+         </div>
+    </div>
+</div>
+
+<div class="container-fluid justify-content-center mt-2">
+   
+   <div class="row align-items-center justify-content-center">
+   <div class="col-md-12 text-left p-1">   
+
+       <div class="list-group">
+
+           @foreach (var contract in @Model)
+           {
+           <li id=@($"contract_{contract.Num}") class="list-group-item list-group-item-action m-1">
+               <div class="d-flex w-100 justify-content-between">
+                   <h5 class="mb-1"><a href="@contract.DocUri" target="_blank">Договор подряда № @contract.Num от @contract.CreateText</a></h5>
+                   <div>
+                       @if (contract.DateText != null)
+                       {
+                           <small class="ml-2">Активен с: @contract.DateText</small>
+                       }
+
+                   </div>
+               </div>
+               <div class="mb-1">@contract.Remark</div>
+
+               @if (contract.Status == ContractStatus.ToSign)
+               {
+                   <div class="d-flex justify-content-between">
+                       <small class="align-self-center bg-warning text-white p-1">@contract.StatusText</small>
+                       <div class="d-block">
+                           <div>
+                               
+                               @(Html.DevExtreme().TextBox().ID($"signCode_1_{contract.Num}").Mask("0").Width(26).Height(26).ElementAttr("style", "display: inline-block").OnKeyUp("ChangeFocus").Visible(false))
+                               @(Html.DevExtreme().TextBox().ID($"signCode_2_{contract.Num}").Mask("0").Width(26).Height(26).ElementAttr("style", "display: inline-block").OnKeyUp("ChangeFocus").Visible(false))
+                               @(Html.DevExtreme().TextBox().ID($"signCode_3_{contract.Num}").Mask("0").Width(26).Height(26).ElementAttr("style", "display: inline-block").OnKeyUp("ChangeFocus").Visible(false))
+                               @*@(Html.DevExtreme().TextBox().ID($"signCode_4_{contract.Num}").Mask("0").Width(26).Height(26).ElementAttr("style", "display: inline-block").OnKeyUp("ChangeFocus").Visible(false))
+                               @(Html.DevExtreme().TextBox().ID($"signCode_5_{contract.Num}").Mask("0").Width(26).Height(26).ElementAttr("style", "display: inline-block").OnKeyUp("ChangeFocus").Visible(false))
+                              *@ 
+                               @(Html.DevExtreme().TextBox().ID($"signCode_4_{contract.Num}").Mask("0").Width(26).Height(26).ElementAttr("style", "display: inline-block").OnKeyUp("VerifySignCode").Visible(false))
+                           </div>
+                  
+                           @(Html.DevExtreme().Button().Text("Подписать").UseSubmitBehavior(false).ElementAttr("class", "btn").ID($"signContract_{contract.Num}").OnClick("OnSignClick"))
+                  
+                       </div>
+                   </div>
+               }
+               else
+               {
+                   <small class="bg-success text-white p-1">@contract.StatusText</small>
+               }
+           </li>
+           }
+       </div>
+
+   </div> 
+   </div> 
+    
+</div>
+
+<script>
+    
+    var OnSignClick = (btn) => {
+        var num = btn.element.attr("id").split('_')[1];
+        
+        //btn.element.hide();
+        
+        btn.component.option("template",function(data, container){$("<div class='button-indicator'></div><span class='dx-button-text'>" + data.text + "</span>").appendTo(container);buttonIndicator = container.find(".button-indicator").dxLoadIndicator({visible: true}).dxLoadIndicator("instance");});
+
+        fetch('/api/codeforsign', {
+            method: 'post'
+            , credentials: 'include'
+            , headers: { 'Accept': 'application/json' }
+        }).then(r => {
+            if (r.status === 200) {
+
+                btn.element.hide();
+
+                $("#contract_" + num + " > div.d-flex.w-100.justify-content-between > div").html("<simple class='bg-info text-white p-1 pl-2 pr-2'>На Ваш телефон выслан код для цифровой подписи договора</simple>")
+                    for (var l = 1; l < 5; ++l)
+                        $("#signCode_" + l.toString() + "_" + num).removeClass("dx-state-invisible").addClass("dx-state-visible");
+                    $("#signCode_1_" + num).dxTextBox("instance").focus();
+                }
+        })
+    }
+
+    var VerifySignCode = (e) => {
+
+        var te = e.element.attr('id'), code = "";
+        var num = te.split('_')[2];
+        for (var l = 1; l < 5; ++l) {
+            var el = $('#' + te.replace('4_', l.toString() + '_'));
+            code += el.dxTextBox("instance")._value;
+        }
+
+        fetch('/api/signing/' + num + "/" + code, {
+            method: 'post'
+            , headers: { 'Accept': 'application/json' }
+            , credentials: 'include'
+        })
+            .then(r => r.json()).then(r => {
+
+                //          console.log(r);
+
+                if (r.Error.length > 0) {
+                    $("#contract_" + num + " > div.d-flex.w-100.justify-content-between > div").html("<simple class='bg-danger text-white p-1 pl-2 pr-2'>" + r.Error + "</simple>")
+                    for (var l = 1; l < 5; ++l) {
+                        var el = $('#' + te.replace('4_', l.toString() + '_')).dxTextBox("instance");
+                        el.reset();
+                        if (l == 1) el.focus();
+                    }
+                    code = "";
+
+                }
+                else {
+                    for (var l = 1; l < 5; ++l) {
+                        var el = $('#' + te.replace('4_', l.toString() + '_'));
+                        el.hide();
+                    }
+
+                    $("#contract_" + num + " > div:nth-child(3) > small").removeClass("bg-warning").addClass("bg-success").text("Активный")
+                    $("#contract_" + num + " > div.d-flex.w-100.justify-content-between > div").html("<small class='ml-2'>Активен с: " + r.SignDateText + "</small>")
+                }
+            });
+    }
+
+    var ChangeFocus = (e) => {
+        var id = e.element.attr('id');
+        var num = Number(id.split('_')[1]);
+        if (e.component._value!=" ") 
+            $('#' + id.replace(num.toString() + '_', (1 + num).toString() + '_')).dxTextBox("instance").focus();
+    }
+
+</script>

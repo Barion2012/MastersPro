@@ -1,0 +1,34 @@
+@model VacancyListModel
+
+@{
+    ViewData["Title"] = "Поиск вакансий";
+}
+
+
+<div class="app-page-title">
+    <div class="page-title-wrapper">
+        <div class="page-title-heading">
+            @ViewData["Title"]
+        </div>
+    </div>
+</div>
+    
+    <div class="row">
+    @for (int row = 0, col = 0; row < Model.Count; ++row, col = row % 3)
+    {
+       // @Html.Raw(col == 0 ? @"<div class=""row"">" : "")
+
+        var mod = Model[row];
+        mod.col = col;
+        mod.row = row;
+        mod.profileReady = Model.profileReady;
+
+        @await Html.PartialAsync("_Card", mod);
+
+       // @Html.Raw(col == 2 ? "</div>" : "")
+    }
+    </div>
+
+</div>
+
+

@@ -1,0 +1,47 @@
+﻿@{
+    ViewData["Title"] = "Все пользователи";
+}
+
+<div class="row">
+        @(Html.DevExtreme().DataGrid<Agregator.Models.AllUserModel>()
+    .DataSource(d => d.Mvc()
+    .Controller("AllUsersApi")
+    .LoadAction("Users")
+    .InsertAction("NewUser")
+    .UpdateAction("UpdateOrder")
+    .DeleteAction("DeleteOrder")
+    .Key("Id")
+    )
+   // .DataSourceOptions(f => f.Select(new[] { "Id", "Email", "Surname", "Name", "Middlename", "PlaceOfBirth" }))
+    .OnInitNewRow("e=>e.data.Id='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) { var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r&0x3 | 0x8); return v.toString(16)})")
+    .AutoNavigateToFocusedRow(true)
+ //   .KeyboardNavigation(e=>e.Enabled=true)
+    .RemoteOperations(true)
+    .Columns(columns =>
+    {
+        columns.AddFor(m => m.Id).Visible(false).DataType(GridColumnDataType.String);
+
+    /*
+    .Lookup(lookup => lookup
+    .DataSource(d => d.Mvc().Controller("DataGridWebApi").LoadAction("CustomersLookup").Key("Value"))
+    .ValueExpr("Value")
+    .DisplayExpr("Text")
+    );
+    */
+        columns.AddFor(m => m.EMail).Caption("Почта").AllowEditing(false);
+        columns.AddFor(m => m.ShortName).Caption("ФИО").AllowEditing(false);
+        columns.AddFor(m => m.UserRole).Caption("Роли");
+    })
+    .FilterRow(f => f.Visible(false))
+    .HeaderFilter(f => f.Visible(true))
+    .GroupPanel(p => p.Visible(false))
+    .Scrolling(s => s.Mode(GridScrollingMode.Virtual))
+    .Height(600)
+    .ShowBorders(true)
+    .Editing(e => e.AllowAdding(true).AllowDeleting(true).AllowUpdating(true))
+    )
+
+
+</div>
+
+
